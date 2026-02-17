@@ -1,0 +1,28 @@
+name: sellio_metrics_app
+description: GitHub metrics dashboard for Sellio-Squad
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.1.0
+  fl_chart: ^0.66.0
+  intl: ^0.18.1
+  provider: ^6.1.1
+  google_fonts: ^6.1.0
+  shimmer: ^3.0.0
+  cached_network_image: ^3.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true

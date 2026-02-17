@@ -1,0 +1,5301 @@
+📱 Flutter App Implementation
+Now let's build the Flutter app with clean architecture, responsive design, and all features.
+
+lib/core/config/app_config.dart
+dart
+// lib/core/config/app_config.dart
+
+class AppConfig {
+  static const String appName = 'Sellio Metrics';
+  static const String orgName = 'Sellio-Squad';
+  
+  // Feature flags
+  static const bool enableHistoricalData = true;
+  static const bool enableGoals = true;
+  static const bool enableDarkMode = true;
+  
+  // Cache durations
+  static const Duration metricsCacheDuration = Duration(minutes: 5);
+  static const Duration historicalCacheDuration = Duration(minutes: 15);
+  
+  // Refresh intervals
+  static const Duration autoRefreshInterval = Duration(minutes: 5);
+}
+lib/core/config/api_config.dart
+dart
+// lib/core/config/api_config.dart
+
+class ApiConfig {
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://localhost:3000/api',
+  );
+  
+  static const Duration connectionTimeout = Duration(seconds: 30);
+  static const Duration receiveTimeout = Duration(seconds: 30);
+  
+  static const Map<String, String> defaultHeaders = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+}
+lib/core/config/theme_config.dart
+dart
+// lib/core/config/theme_config.dart
+
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class ThemeConfig {
+  // Colors
+  static const Color primaryColor = Color(0xFF6366F1);
+  static const Color secondaryColor = Color(0xFF8B5CF6);
+  static const Color accentColor = Color(0xFF06B6D4);
+  
+  static const Color successColor = Color(0xFF10B981);
+  static const Color warningColor = Color(0xFFF59E0B);
+  static const Color errorColor = Color(0xFFEF4444);
+  static const Color infoColor = Color(0xFF3B82F6);
+  
+  // Dark theme colors
+  static const Color darkBackground = Color(0xFF0F172A);
+  static const Color darkSurface = Color(0xFF1E293B);
+  static const Color darkCard = Color(0xFF334155);
+  static const Color darkBorder = Color(0xFF475569);
+  
+  // Light theme colors
+  static const Color lightBackground = Color(0xFFF8FAFC);
+  static const Color lightSurface = Color(0xFFFFFFFF);
+  static const Color lightCard = Color(0xFFF1F5F9);
+  static const Color lightBorder = Color(0xFFE2E8F0);
+
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: ColorScheme.dark(
+        primary: primaryColor,
+        secondary: secondaryColor,
+        surface: darkSurface,
+        background: darkBackground,
+        error: errorColor,
+      ),
+      scaffoldBackgroundColor: darkBackground,
+      cardColor: darkSurface,
+      dividerColor: darkBorder,
+      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: darkSurface,
+        elevation: 0,
+      ),
+      cardTheme: CardTheme(
+        color: darkSurface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: darkBorder, width: 1),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: darkCard,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: darkBorder),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: darkBorder),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: primaryColor, width: 2),
+        ),
+      ),
+    );
+  }
+
+  static ThemeData get lightTheme {
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: ColorScheme.light(
+        primary: primaryColor,
+        secondary: secondaryColor,
+        surface: lightSurface,
+        background: lightBackground,
+        error: errorColor,
+      ),
+      scaffoldBackgroundColor: lightBackground,
+      cardColor: lightSurface,
+      dividerColor: lightBorder,
+      textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: lightSurface,
+        elevation: 0,
+        iconTheme: IconThemeData(color: Colors.black87),
+        titleTextStyle: TextStyle(
+          color: Colors.black87,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      cardTheme: CardTheme(
+        color: lightSurface,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: lightBorder, width: 1),
+        ),
+      ),
+    );
+  }
+}
+lib/core/constants/spacing_constants.dart
+dart
+// lib/core/constants/spacing_constants.dart
+
+class Spacing {
+  // Base spacing unit
+  static const double unit = 4.0;
+  
+  // Named spacings
+  static const double xxs = unit;        // 4
+  static const double xs = unit * 2;     // 8
+  static const double sm = unit * 3;     // 12
+  static const double md = unit * 4;     // 16
+  static const double lg = unit * 6;     // 24
+  static const double xl = unit * 8;     // 32
+  static const double xxl = unit * 12;   // 48
+  static const double xxxl = unit * 16;  // 64
+  
+  // Screen padding
+  static const double screenPaddingMobile = md;
+  static const double screenPaddingTablet = lg;
+  static const double screenPaddingDesktop = xl;
+  
+  // Card padding
+  static const double cardPadding = md;
+  static const double cardPaddingLarge = lg;
+  
+  // Border radius
+  static const double radiusSm = 8.0;
+  static const double radiusMd = 12.0;
+  static const double radiusLg = 16.0;
+  static const double radiusXl = 24.0;
+  static const double radiusFull = 9999.0;
+}
+lib/core/utils/responsive_utils.dart
+dart
+// lib/core/utils/responsive_utils.dart
+
+import 'package:flutter/material.dart';
+
+enum DeviceType { mobile, tablet, desktop }
+
+class ResponsiveUtils {
+  static const double mobileBreakpoint = 600;
+  static const double tabletBreakpoint = 900;
+  static const double desktopBreakpoint = 1200;
+  
+  static DeviceType getDeviceType(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    
+    if (width < mobileBreakpoint) {
+      return DeviceType.mobile;
+    } else if (width < desktopBreakpoint) {
+      return DeviceType.tablet;
+    } else {
+      return DeviceType.desktop;
+    }
+  }
+  
+  static bool isMobile(BuildContext context) {
+    return getDeviceType(context) == DeviceType.mobile;
+  }
+  
+  static bool isTablet(BuildContext context) {
+    return getDeviceType(context) == DeviceType.tablet;
+  }
+  
+  static bool isDesktop(BuildContext context) {
+    return getDeviceType(context) == DeviceType.desktop;
+  }
+  
+  static double getScreenPadding(BuildContext context) {
+    switch (getDeviceType(context)) {
+      case DeviceType.mobile:
+        return 16;
+      case DeviceType.tablet:
+        return 24;
+      case DeviceType.desktop:
+        return 32;
+    }
+  }
+  
+  static int getGridColumns(BuildContext context) {
+    switch (getDeviceType(context)) {
+      case DeviceType.mobile:
+        return 2;
+      case DeviceType.tablet:
+        return 3;
+      case DeviceType.desktop:
+        return 4;
+    }
+  }
+  
+  static double getCardWidth(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final padding = getScreenPadding(context);
+    final columns = getGridColumns(context);
+    final spacing = 16.0;
+    
+    return (screenWidth - padding * 2 - spacing * (columns - 1)) / columns;
+  }
+  
+  static T responsive<T>(
+    BuildContext context, {
+    required T mobile,
+    T? tablet,
+    T? desktop,
+  }) {
+    switch (getDeviceType(context)) {
+      case DeviceType.mobile:
+        return mobile;
+      case DeviceType.tablet:
+        return tablet ?? mobile;
+      case DeviceType.desktop:
+        return desktop ?? tablet ?? mobile;
+    }
+  }
+}
+lib/core/utils/date_utils.dart
+dart
+// lib/core/utils/date_utils.dart
+
+import 'package:intl/intl.dart';
+
+class AppDateUtils {
+  static final DateFormat _dateFormat = DateFormat('MMM d, yyyy');
+  static final DateFormat _shortDateFormat = DateFormat('MMM d');
+  static final DateFormat _timeFormat = DateFormat('HH:mm');
+  static final DateFormat _dateTimeFormat = DateFormat('MMM d, yyyy HH:mm');
+  static final DateFormat _isoFormat = DateFormat('yyyy-MM-dd');
+  
+  static String formatDate(DateTime date) {
+    return _dateFormat.format(date);
+  }
+  
+  static String formatShortDate(DateTime date) {
+    return _shortDateFormat.format(date);
+  }
+  
+  static String formatTime(DateTime date) {
+    return _timeFormat.format(date);
+  }
+  
+  static String formatDateTime(DateTime date) {
+    return _dateTimeFormat.format(date);
+  }
+  
+  static String formatIso(DateTime date) {
+    return _isoFormat.format(date);
+  }
+  
+  static String formatRelative(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    
+    if (difference.inDays > 365) {
+      return '${(difference.inDays / 365).floor()}y ago';
+    } else if (difference.inDays > 30) {
+      return '${(difference.inDays / 30).floor()}mo ago';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
+  }
+  
+  static String formatDuration(double hours) {
+    if (hours < 1) {
+      return '${(hours * 60).round()}m';
+    } else if (hours < 24) {
+      return '${hours.toStringAsFixed(1)}h';
+    } else {
+      return '${(hours / 24).toStringAsFixed(1)}d';
+    }
+  }
+  
+  static int getDaysRemaining(DateTime endDate) {
+    final now = DateTime.now();
+    return endDate.difference(now).inDays;
+  }
+  
+  static double getProgressPercentage(DateTime startDate, DateTime endDate) {
+    final now = DateTime.now();
+    final total = endDate.difference(startDate).inMilliseconds;
+    final elapsed = now.difference(startDate).inMilliseconds;
+    return (elapsed / total * 100).clamp(0, 100);
+  }
+}
+lib/core/utils/number_utils.dart
+dart
+// lib/core/utils/number_utils.dart
+
+import 'package:intl/intl.dart';
+
+class NumberUtils {
+  static final NumberFormat _compactFormat = NumberFormat.compact();
+  static final NumberFormat _percentFormat = NumberFormat.percentPattern();
+  static final NumberFormat _decimalFormat = NumberFormat('#,##0.##');
+  
+  static String formatCompact(num value) {
+    return _compactFormat.format(value);
+  }
+  
+  static String formatPercent(double value) {
+    return '${value.toStringAsFixed(1)}%';
+  }
+  
+  static String formatDecimal(num value) {
+    return _decimalFormat.format(value);
+  }
+  
+  static String formatWithSign(num value) {
+    final prefix = value >= 0 ? '+' : '';
+    return '$prefix${formatDecimal(value)}';
+  }
+  
+  static String formatPercentChange(double value) {
+    final prefix = value >= 0 ? '+' : '';
+    return '$prefix${value.toStringAsFixed(1)}%';
+  }
+  
+  static String formatScore(double score) {
+    return score.round().toString();
+  }
+  
+  static String formatLargeNumber(int number) {
+    if (number >= 1000000) {
+      return '${(number / 1000000).toStringAsFixed(1)}M';
+    } else if (number >= 1000) {
+      return '${(number / 1000).toStringAsFixed(1)}K';
+    }
+    return number.toString();
+  }
+}
+lib/core/network/api_client.dart
+dart
+// lib/core/network/api_client.dart
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../config/api_config.dart';
+import '../errors/exceptions.dart';
+
+class ApiClient {
+  final http.Client _client;
+  final String baseUrl;
+  
+  ApiClient({
+    http.Client? client,
+    String? baseUrl,
+  })  : _client = client ?? http.Client(),
+        baseUrl = baseUrl ?? ApiConfig.baseUrl;
+  
+  Future<Map<String, dynamic>> get(
+    String endpoint, {
+    Map<String, String>? queryParams,
+  }) async {
+    final uri = _buildUri(endpoint, queryParams);
+    
+    try {
+      final response = await _client
+          .get(uri, headers: ApiConfig.defaultHeaders)
+          .timeout(ApiConfig.connectionTimeout);
+      
+      return _handleResponse(response);
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+  
+  Future<Map<String, dynamic>> post(
+    String endpoint, {
+    Map<String, dynamic>? body,
+  }) async {
+    final uri = _buildUri(endpoint, null);
+    
+    try {
+      final response = await _client
+          .post(
+            uri,
+            headers: ApiConfig.defaultHeaders,
+            body: body != null ? jsonEncode(body) : null,
+          )
+          .timeout(ApiConfig.connectionTimeout);
+      
+      return _handleResponse(response);
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+  
+  Future<Map<String, dynamic>> put(
+    String endpoint, {
+    Map<String, dynamic>? body,
+  }) async {
+    final uri = _buildUri(endpoint, null);
+    
+    try {
+      final response = await _client
+          .put(
+            uri,
+            headers: ApiConfig.defaultHeaders,
+            body: body != null ? jsonEncode(body) : null,
+          )
+          .timeout(ApiConfig.connectionTimeout);
+      
+      return _handleResponse(response);
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+  
+  Future<void> delete(String endpoint) async {
+    final uri = _buildUri(endpoint, null);
+    
+    try {
+      final response = await _client
+          .delete(uri, headers: ApiConfig.defaultHeaders)
+          .timeout(ApiConfig.connectionTimeout);
+      
+      if (response.statusCode != 204 && response.statusCode != 200) {
+        throw ServerException('Delete failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+  
+  Uri _buildUri(String endpoint, Map<String, String>? queryParams) {
+    final path = endpoint.startsWith('/') ? endpoint : '/$endpoint';
+    return Uri.parse('$baseUrl$path').replace(queryParameters: queryParams);
+  }
+  
+  Map<String, dynamic> _handleResponse(http.Response response) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response.body.isEmpty) {
+        return {};
+      }
+      return jsonDecode(response.body) as Map<String, dynamic>;
+    }
+    
+    switch (response.statusCode) {
+      case 400:
+        throw BadRequestException(_getErrorMessage(response));
+      case 401:
+        throw UnauthorizedException(_getErrorMessage(response));
+      case 403:
+        throw ForbiddenException(_getErrorMessage(response));
+      case 404:
+        throw NotFoundException(_getErrorMessage(response));
+      case 429:
+        throw RateLimitException(_getErrorMessage(response));
+      case 500:
+      case 502:
+      case 503:
+        throw ServerException(_getErrorMessage(response));
+      default:
+        throw ServerException('Request failed: ${response.statusCode}');
+    }
+  }
+  
+  String _getErrorMessage(http.Response response) {
+    try {
+      final body = jsonDecode(response.body);
+      return body['error'] ?? body['message'] ?? 'Unknown error';
+    } catch (_) {
+      return 'Request failed: ${response.statusCode}';
+    }
+  }
+  
+  Exception _handleError(dynamic error) {
+    if (error is AppException) {
+      return error;
+    }
+    if (error.toString().contains('SocketException') ||
+        error.toString().contains('TimeoutException')) {
+      return NetworkException('No internet connection');
+    }
+    return ServerException(error.toString());
+  }
+  
+  void dispose() {
+    _client.close();
+  }
+}
+lib/core/errors/exceptions.dart
+dart
+// lib/core/errors/exceptions.dart
+
+abstract class AppException implements Exception {
+  final String message;
+  const AppException(this.message);
+  
+  @override
+  String toString() => message;
+}
+
+class ServerException extends AppException {
+  const ServerException(super.message);
+}
+
+class NetworkException extends AppException {
+  const NetworkException(super.message);
+}
+
+class CacheException extends AppException {
+  const CacheException(super.message);
+}
+
+class BadRequestException extends AppException {
+  const BadRequestException(super.message);
+}
+
+class UnauthorizedException extends AppException {
+  const UnauthorizedException(super.message);
+}
+
+class ForbiddenException extends AppException {
+  const ForbiddenException(super.message);
+}
+
+class NotFoundException extends AppException {
+  const NotFoundException(super.message);
+}
+
+class RateLimitException extends AppException {
+  const RateLimitException(super.message);
+}
+
+class ValidationException extends AppException {
+  final Map<String, String>? fieldErrors;
+  
+  const ValidationException(super.message, {this.fieldErrors});
+}
+lib/core/errors/failures.dart
+dart
+// lib/core/errors/failures.dart
+
+abstract class Failure {
+  final String message;
+  const Failure(this.message);
+}
+
+class ServerFailure extends Failure {
+  const ServerFailure(super.message);
+}
+
+class NetworkFailure extends Failure {
+  const NetworkFailure(super.message);
+}
+
+class CacheFailure extends Failure {
+  const CacheFailure(super.message);
+}
+
+class ValidationFailure extends Failure {
+  final Map<String, String>? fieldErrors;
+  const ValidationFailure(super.message, {this.fieldErrors});
+}
+lib/data/models/goals/goal_model.dart
+dart
+// lib/data/models/goals/goal_model.dart
+
+import '../../../domain/entities/goals/goal.dart';
+
+class GoalModel extends Goal {
+  const GoalModel({
+    required super.id,
+    required super.title,
+    super.description,
+    required super.type,
+    required super.category,
+    required super.metricType,
+    required super.targetValue,
+    required super.targetOperator,
+    super.unit,
+    required super.startDate,
+    required super.endDate,
+    required super.period,
+    required super.currentValue,
+    required super.progressPercentage,
+    required super.status,
+    super.milestones,
+    super.owner,
+    super.team,
+    required super.priority,
+    required super.isActive,
+  });
+
+  factory GoalModel.fromJson(Map<String, dynamic> json) {
+    return GoalModel(
+      id: json['_id'] ?? json['id'],
+      title: json['title'],
+      description: json['description'],
+      type: json['type'] ?? 'target',
+      category: json['category'],
+      metricType: json['metricType'],
+      targetValue: (json['targetValue'] as num).toDouble(),
+      targetOperator: json['targetOperator'] ?? 'gte',
+      unit: json['unit'] ?? '',
+      startDate: DateTime.parse(json['startDate']),
+      endDate: DateTime.parse(json['endDate']),
+      period: json['period'] ?? 'quarterly',
+      currentValue: (json['currentValue'] as num?)?.toDouble() ?? 0,
+      progressPercentage: (json['progressPercentage'] as num?)?.toDouble() ?? 0,
+      status: json['status'] ?? 'not_started',
+      milestones: json['milestones'] != null
+          ? (json['milestones'] as List)
+              .map((m) => MilestoneModel.fromJson(m))
+              .toList()
+          : null,
+      owner: json['owner'],
+      team: json['team'],
+      priority: json['priority'] ?? 'medium',
+      isActive: json['isActive'] ?? true,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'description': description,
+      'type': type,
+      'category': category,
+      'metricType': metricType,
+      'targetValue': targetValue,
+      'targetOperator': targetOperator,
+      'unit': unit,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
+      'period': period,
+      'owner': owner,
+      'team': team,
+      'priority': priority,
+      'milestones': milestones?.map((m) => (m as MilestoneModel).toJson()).toList(),
+    };
+  }
+}
+
+class MilestoneModel extends Milestone {
+  const MilestoneModel({
+    required super.title,
+    required super.targetValue,
+    required super.targetDate,
+    required super.completed,
+    super.completedAt,
+  });
+
+  factory MilestoneModel.fromJson(Map<String, dynamic> json) {
+    return MilestoneModel(
+      title: json['title'],
+      targetValue: (json['targetValue'] as num).toDouble(),
+      targetDate: DateTime.parse(json['targetDate']),
+      completed: json['completed'] ?? false,
+      completedAt: json['completedAt'] != null
+          ? DateTime.parse(json['completedAt'])
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'targetValue': targetValue,
+      'targetDate': targetDate.toIso8601String(),
+    };
+  }
+}
+
+class GoalsSummaryModel extends GoalsSummary {
+  const GoalsSummaryModel({
+    required super.total,
+    required super.byStatus,
+    required super.byCategory,
+    required super.byPriority,
+    required super.atRisk,
+    required super.recentlyAchieved,
+    required super.averageProgress,
+  });
+
+  factory GoalsSummaryModel.fromJson(Map<String, dynamic> json) {
+    return GoalsSummaryModel(
+      total: json['total'] ?? 0,
+      byStatus: Map<String, int>.from(json['byStatus'] ?? {}),
+      byCategory: Map<String, int>.from(json['byCategory'] ?? {}),
+      byPriority: Map<String, int>.from(json['byPriority'] ?? {}),
+      atRisk: (json['atRisk'] as List?)
+              ?.map((g) => GoalModel.fromJson(g))
+              .toList() ??
+          [],
+      recentlyAchieved: (json['recentlyAchieved'] as List?)
+              ?.map((g) => GoalModel.fromJson(g))
+              .toList() ??
+          [],
+      averageProgress: (json['averageProgress'] as num?)?.toDouble() ?? 0,
+    );
+  }
+}
+
+class GoalPredictionModel extends GoalPrediction {
+  const GoalPredictionModel({
+    required super.prediction,
+    required super.projectedValue,
+    required super.dailyRate,
+    required super.daysRemaining,
+    required super.confidence,
+    required super.requiredDailyRate,
+    required super.message,
+  });
+
+  factory GoalPredictionModel.fromJson(Map<String, dynamic> json) {
+    return GoalPredictionModel(
+      prediction: json['prediction'],
+      projectedValue: (json['projectedValue'] as num).toDouble(),
+      dailyRate: (json['dailyRate'] as num).toDouble(),
+      daysRemaining: json['daysRemaining'],
+      confidence: json['confidence'],
+      requiredDailyRate: (json['requiredDailyRate'] as num).toDouble(),
+      message: json['message'],
+    );
+  }
+}
+lib/data/models/historical/trend_model.dart
+dart
+// lib/data/models/historical/trend_model.dart
+
+import '../../../domain/entities/historical/trend.dart';
+
+class TrendDataModel extends TrendData {
+  const TrendDataModel({
+    required super.metric,
+    required super.period,
+    required super.groupBy,
+    required super.dataPoints,
+    required super.trend,
+    required super.summary,
+  });
+
+  factory TrendDataModel.fromJson(Map<String, dynamic> json) {
+    return TrendDataModel(
+      metric: json['metric'],
+      period: json['period'],
+      groupBy: json['groupBy'],
+      dataPoints: (json['dataPoints'] as List)
+          .map((d) => DataPointModel.fromJson(d))
+          .toList(),
+      trend: TrendInfoModel.fromJson(json['trend']),
+      summary: TrendSummaryModel.fromJson(json['summary']),
+    );
+  }
+}
+
+class DataPointModel extends DataPoint {
+  const DataPointModel({
+    required super.date,
+    required super.value,
+  });
+
+  factory DataPointModel.fromJson(Map<String, dynamic> json) {
+    return DataPointModel(
+      date: json['date'],
+      value: (json['value'] as num).toDouble(),
+    );
+  }
+}
+
+class TrendInfoModel extends TrendInfo {
+  const TrendInfoModel({
+    required super.direction,
+    required super.strength,
+    required super.slope,
+  });
+
+  factory TrendInfoModel.fromJson(Map<String, dynamic> json) {
+    return TrendInfoModel(
+      direction: json['direction'],
+      strength: (json['strength'] as num).toDouble(),
+      slope: (json['slope'] as num).toDouble(),
+    );
+  }
+}
+
+class TrendSummaryModel extends TrendSummary {
+  const TrendSummaryModel({
+    required super.total,
+    required super.average,
+    required super.min,
+    required super.max,
+  });
+
+  factory TrendSummaryModel.fromJson(Map<String, dynamic> json) {
+    return TrendSummaryModel(
+      total: (json['total'] as num).toDouble(),
+      average: (json['average'] as num).toDouble(),
+      min: (json['min'] as num).toDouble(),
+      max: (json['max'] as num).toDouble(),
+    );
+  }
+}
+
+class PeriodComparisonModel extends PeriodComparison {
+  const PeriodComparisonModel({
+    required super.metrics,
+  });
+
+  factory PeriodComparisonModel.fromJson(Map<String, dynamic> json) {
+    final metrics = <String, MetricComparisonModel>{};
+    
+    json.forEach((key, value) {
+      if (value is Map<String, dynamic>) {
+        metrics[key] = MetricComparisonModel.fromJson(value);
+      }
+    });
+    
+    return PeriodComparisonModel(metrics: metrics);
+  }
+}
+
+class MetricComparisonModel extends MetricComparison {
+  const MetricComparisonModel({
+    required super.current,
+    required super.previous,
+    required super.change,
+    required super.changePercentage,
+  });
+
+  factory MetricComparisonModel.fromJson(Map<String, dynamic> json) {
+    return MetricComparisonModel(
+      current: (json['current'] as num).toDouble(),
+      previous: (json['previous'] as num).toDouble(),
+      change: (json['change'] as num).toDouble(),
+      changePercentage: (json['changePercentage'] as num).toDouble(),
+    );
+  }
+}
+lib/domain/entities/goals/goal.dart
+dart
+// lib/domain/entities/goals/goal.dart
+
+import 'package:equatable/equatable.dart';
+
+class Goal extends Equatable {
+  final String id;
+  final String title;
+  final String? description;
+  final String type;
+  final String category;
+  final String metricType;
+  final double targetValue;
+  final String targetOperator;
+  final String unit;
+  final DateTime startDate;
+  final DateTime endDate;
+  final String period;
+  final double currentValue;
+  final double progressPercentage;
+  final String status;
+  final List<Milestone>? milestones;
+  final String? owner;
+  final String? team;
+  final String priority;
+  final bool isActive;
+
+  const Goal({
+    required this.id,
+    required this.title,
+    this.description,
+    required this.type,
+    required this.category,
+    required this.metricType,
+    required this.targetValue,
+    required this.targetOperator,
+    this.unit = '',
+    required this.startDate,
+    required this.endDate,
+    required this.period,
+    required this.currentValue,
+    required this.progressPercentage,
+    required this.status,
+    this.milestones,
+    this.owner,
+    this.team,
+    required this.priority,
+    required this.isActive,
+  });
+
+  int get daysRemaining {
+    final now = DateTime.now();
+    return endDate.difference(now).inDays;
+  }
+
+  double get timeProgressPercentage {
+    final now = DateTime.now();
+    final total = endDate.difference(startDate).inMilliseconds;
+    final elapsed = now.difference(startDate).inMilliseconds;
+    return (elapsed / total * 100).clamp(0, 100);
+  }
+
+  bool get isOnTrack => status == 'on_track' || status == 'achieved';
+  bool get isAtRisk => status == 'at_risk' || status == 'behind';
+  bool get isAchieved => status == 'achieved';
+
+  @override
+  List<Object?> get props => [id, title, progressPercentage, status];
+}
+
+class Milestone extends Equatable {
+  final String title;
+  final double targetValue;
+  final DateTime targetDate;
+  final bool completed;
+  final DateTime? completedAt;
+
+  const Milestone({
+    required this.title,
+    required this.targetValue,
+    required this.targetDate,
+    required this.completed,
+    this.completedAt,
+  });
+
+  @override
+  List<Object?> get props => [title, targetValue, targetDate, completed];
+}
+
+class GoalsSummary extends Equatable {
+  final int total;
+  final Map<String, int> byStatus;
+  final Map<String, int> byCategory;
+  final Map<String, int> byPriority;
+  final List<Goal> atRisk;
+  final List<Goal> recentlyAchieved;
+  final double averageProgress;
+
+  const GoalsSummary({
+    required this.total,
+    required this.byStatus,
+    required this.byCategory,
+    required this.byPriority,
+    required this.atRisk,
+    required this.recentlyAchieved,
+    required this.averageProgress,
+  });
+
+  @override
+  List<Object?> get props => [total, averageProgress];
+}
+
+class GoalPrediction extends Equatable {
+  final String prediction;
+  final double projectedValue;
+  final double dailyRate;
+  final int daysRemaining;
+  final int confidence;
+  final double requiredDailyRate;
+  final String message;
+
+  const GoalPrediction({
+    required this.prediction,
+    required this.projectedValue,
+    required this.dailyRate,
+    required this.daysRemaining,
+    required this.confidence,
+    required this.requiredDailyRate,
+    required this.message,
+  });
+
+  @override
+  List<Object?> get props => [prediction, projectedValue, confidence];
+}
+lib/domain/entities/historical/trend.dart
+dart
+// lib/domain/entities/historical/trend.dart
+
+import 'package:equatable/equatable.dart';
+
+class TrendData extends Equatable {
+  final String metric;
+  final String period;
+  final String groupBy;
+  final List<DataPoint> dataPoints;
+  final TrendInfo trend;
+  final TrendSummary summary;
+
+  const TrendData({
+    required this.metric,
+    required this.period,
+    required this.groupBy,
+    required this.dataPoints,
+    required this.trend,
+    required this.summary,
+  });
+
+  @override
+  List<Object?> get props => [metric, period, dataPoints];
+}
+
+class DataPoint extends Equatable {
+  final String date;
+  final double value;
+
+  const DataPoint({
+    required this.date,
+    required this.value,
+  });
+
+  @override
+  List<Object?> get props => [date, value];
+}
+
+class TrendInfo extends Equatable {
+  final String direction;
+  final double strength;
+  final double slope;
+
+  const TrendInfo({
+    required this.direction,
+    required this.strength,
+    required this.slope,
+  });
+
+  bool get isUp => direction == 'up';
+  bool get isDown => direction == 'down';
+  bool get isStable => direction == 'stable';
+
+  @override
+  List<Object?> get props => [direction, strength, slope];
+}
+
+class TrendSummary extends Equatable {
+  final double total;
+  final double average;
+  final double min;
+  final double max;
+
+  const TrendSummary({
+    required this.total,
+    required this.average,
+    required this.min,
+    required this.max,
+  });
+
+  @override
+  List<Object?> get props => [total, average, min, max];
+}
+
+class PeriodComparison extends Equatable {
+  final Map<String, MetricComparison> metrics;
+
+  const PeriodComparison({
+    required this.metrics,
+  });
+
+  @override
+  List<Object?> get props => [metrics];
+}
+
+class MetricComparison extends Equatable {
+  final double current;
+  final double previous;
+  final double change;
+  final double changePercentage;
+
+  const MetricComparison({
+    required this.current,
+    required this.previous,
+    required this.change,
+    required this.changePercentage,
+  });
+
+  bool get isPositive => change > 0;
+  bool get isNegative => change < 0;
+
+  @override
+  List<Object?> get props => [current, previous, change, changePercentage];
+}
+lib/presentation/widgets/common/responsive_builder.dart
+dart
+// lib/presentation/widgets/common/responsive_builder.dart
+
+import 'package:flutter/material.dart';
+import '../../../core/utils/responsive_utils.dart';
+
+class ResponsiveBuilder extends StatelessWidget {
+  final Widget Function(BuildContext context, DeviceType deviceType) builder;
+  final Widget? mobile;
+  final Widget? tablet;
+  final Widget? desktop;
+
+  const ResponsiveBuilder({
+    super.key,
+    required this.builder,
+  })  : mobile = null,
+        tablet = null,
+        desktop = null;
+
+  const ResponsiveBuilder.widgets({
+    super.key,
+    required Widget this.mobile,
+    this.tablet,
+    this.desktop,
+  }) : builder = _defaultBuilder;
+
+  static Widget _defaultBuilder(BuildContext context, DeviceType deviceType) {
+    return const SizedBox.shrink();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final deviceType = ResponsiveUtils.getDeviceType(context);
+
+    if (mobile != null) {
+      switch (deviceType) {
+        case DeviceType.mobile:
+          return mobile!;
+        case DeviceType.tablet:
+          return tablet ?? mobile!;
+        case DeviceType.desktop:
+          return desktop ?? tablet ?? mobile!;
+      }
+    }
+
+    return builder(context, deviceType);
+  }
+}
+
+class ResponsiveGrid extends StatelessWidget {
+  final List<Widget> children;
+  final double spacing;
+  final double runSpacing;
+  final int? mobileColumns;
+  final int? tabletColumns;
+  final int? desktopColumns;
+
+  const ResponsiveGrid({
+    super.key,
+    required this.children,
+    this.spacing = 16,
+    this.runSpacing = 16,
+    this.mobileColumns,
+    this.tabletColumns,
+    this.desktopColumns,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final columns = ResponsiveUtils.responsive(
+          context,
+          mobile: mobileColumns ?? 1,
+          tablet: tabletColumns ?? 2,
+          desktop: desktopColumns ?? 4,
+        );
+
+        final itemWidth = (constraints.maxWidth - (spacing * (columns - 1))) / columns;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: runSpacing,
+          children: children.map((child) {
+            return SizedBox(
+              width: itemWidth,
+              child: child,
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+}
+
+class ResponsiveRow extends StatelessWidget {
+  final List<Widget> children;
+  final double spacing;
+  final bool wrapOnMobile;
+  final MainAxisAlignment mainAxisAlignment;
+  final CrossAxisAlignment crossAxisAlignment;
+
+  const ResponsiveRow({
+    super.key,
+    required this.children,
+    this.spacing = 16,
+    this.wrapOnMobile = true,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = ResponsiveUtils.isMobile(context);
+
+    if (isMobile && wrapOnMobile) {
+
+lib/presentation/widgets/common/responsive_builder.dart (continued)
+dart
+      return Column(
+        crossAxisAlignment: crossAxisAlignment,
+        children: children.map((child) {
+          final index = children.indexOf(child);
+          return Padding(
+            padding: EdgeInsets.only(bottom: index < children.length - 1 ? spacing : 0),
+            child: child,
+          );
+        }).toList(),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: mainAxisAlignment,
+      crossAxisAlignment: crossAxisAlignment,
+      children: children.map((child) {
+        final index = children.indexOf(child);
+        return Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(right: index < children.length - 1 ? spacing : 0),
+            child: child,
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class ResponsivePadding extends StatelessWidget {
+  final Widget child;
+  final EdgeInsets? mobilePadding;
+  final EdgeInsets? tabletPadding;
+  final EdgeInsets? desktopPadding;
+
+  const ResponsivePadding({
+    super.key,
+    required this.child,
+    this.mobilePadding,
+    this.tabletPadding,
+    this.desktopPadding,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final padding = ResponsiveUtils.responsive(
+      context,
+      mobile: mobilePadding ?? const EdgeInsets.all(16),
+      tablet: tabletPadding ?? const EdgeInsets.all(24),
+      desktop: desktopPadding ?? const EdgeInsets.all(32),
+    );
+
+    return Padding(
+      padding: padding,
+      child: child,
+    );
+  }
+}
+lib/presentation/widgets/common/stat_card.dart
+dart
+// lib/presentation/widgets/common/stat_card.dart
+
+import 'package:flutter/material.dart';
+import '../../../core/config/theme_config.dart';
+import '../../../core/constants/spacing_constants.dart';
+import '../../../core/utils/number_utils.dart';
+
+class StatCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color? color;
+  final String? subtitle;
+  final double? change;
+  final bool isLoading;
+  final VoidCallback? onTap;
+
+  const StatCard({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.icon,
+    this.color,
+    this.subtitle,
+    this.change,
+    this.isLoading = false,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cardColor = color ?? ThemeConfig.primaryColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(Spacing.radiusLg),
+        child: Container(
+          padding: const EdgeInsets.all(Spacing.cardPadding),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Spacing.radiusLg),
+            border: Border.all(
+              color: cardColor.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: isLoading
+              ? _buildLoadingState()
+              : _buildContent(context, cardColor, isDark),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        const SizedBox(height: Spacing.sm),
+        Container(
+          width: 80,
+          height: 32,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        const SizedBox(height: Spacing.xs),
+        Container(
+          width: 60,
+          height: 16,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContent(BuildContext context, Color cardColor, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Icon(icon, color: cardColor, size: 28),
+            if (change != null) _buildChangeIndicator(change!),
+          ],
+        ),
+        const SizedBox(height: Spacing.sm),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: cardColor,
+          ),
+        ),
+        const SizedBox(height: Spacing.xxs),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.grey[300] : Colors.grey[700],
+          ),
+        ),
+        if (subtitle != null) ...[
+          const SizedBox(height: Spacing.xxs),
+          Text(
+            subtitle!,
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark ? Colors.grey[500] : Colors.grey[500],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildChangeIndicator(double change) {
+    final isPositive = change >= 0;
+    final color = isPositive ? ThemeConfig.successColor : ThemeConfig.errorColor;
+    final icon = isPositive ? Icons.arrow_upward : Icons.arrow_downward;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(Spacing.radiusSm),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 2),
+          Text(
+            NumberUtils.formatPercentChange(change),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class LargeStatCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+  final String? description;
+  final Widget? chart;
+  final List<StatItem>? items;
+
+  const LargeStatCard({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+    this.description,
+    this.chart,
+    this.items,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(Spacing.cardPaddingLarge),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: color, size: 24),
+                ),
+                const SizedBox(width: Spacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      if (description != null)
+                        Text(
+                          description!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+              ],
+            ),
+            if (chart != null) ...[
+              const SizedBox(height: Spacing.lg),
+              SizedBox(
+                height: 200,
+                child: chart!,
+              ),
+            ],
+            if (items != null && items!.isNotEmpty) ...[
+              const SizedBox(height: Spacing.lg),
+              const Divider(),
+              const SizedBox(height: Spacing.md),
+              ...items!.map((item) => _buildStatItem(item)),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatItem(StatItem item) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: Spacing.xs),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            item.label,
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[600],
+            ),
+          ),
+          Text(
+            item.value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: item.color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class StatItem {
+  final String label;
+  final String value;
+  final Color? color;
+
+  const StatItem({
+    required this.label,
+    required this.value,
+    this.color,
+  });
+}
+lib/presentation/widgets/common/loading_shimmer.dart
+dart
+// lib/presentation/widgets/common/loading_shimmer.dart
+
+import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
+import '../../../core/constants/spacing_constants.dart';
+
+class LoadingShimmer extends StatelessWidget {
+  final double? width;
+  final double height;
+  final double borderRadius;
+
+  const LoadingShimmer({
+    super.key,
+    this.width,
+    this.height = 20,
+    this.borderRadius = 4,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Shimmer.fromColors(
+      baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+      highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+      ),
+    );
+  }
+}
+
+class CardLoadingShimmer extends StatelessWidget {
+  final double? height;
+
+  const CardLoadingShimmer({
+    super.key,
+    this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Shimmer.fromColors(
+      baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+      highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+      child: Container(
+        height: height ?? 150,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(Spacing.radiusLg),
+        ),
+      ),
+    );
+  }
+}
+
+class StatCardLoadingShimmer extends StatelessWidget {
+  const StatCardLoadingShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Shimmer.fromColors(
+      baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+      highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+      child: Container(
+        padding: const EdgeInsets.all(Spacing.cardPadding),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(Spacing.radiusLg),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            const SizedBox(height: Spacing.sm),
+            Container(
+              width: 80,
+              height: 32,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(height: Spacing.xs),
+            Container(
+              width: 100,
+              height: 16,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ChartLoadingShimmer extends StatelessWidget {
+  final double height;
+
+  const ChartLoadingShimmer({
+    super.key,
+    this.height = 300,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Shimmer.fromColors(
+      baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+      highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+      child: Container(
+        height: height,
+        padding: const EdgeInsets.all(Spacing.cardPadding),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(Spacing.radiusLg),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 150,
+              height: 20,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const Spacer(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: List.generate(
+                7,
+                (index) => Container(
+                  width: 30,
+                  height: 50 + (index * 20).toDouble(),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: Spacing.md),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ListLoadingShimmer extends StatelessWidget {
+  final int itemCount;
+  final double itemHeight;
+
+  const ListLoadingShimmer({
+    super.key,
+    this.itemCount = 5,
+    this.itemHeight = 60,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: List.generate(
+        itemCount,
+        (index) => Padding(
+          padding: const EdgeInsets.only(bottom: Spacing.sm),
+          child: _ListItemShimmer(height: itemHeight),
+        ),
+      ),
+    );
+  }
+}
+
+class _ListItemShimmer extends StatelessWidget {
+  final double height;
+
+  const _ListItemShimmer({required this.height});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Shimmer.fromColors(
+      baseColor: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+      highlightColor: isDark ? Colors.grey[700]! : Colors.grey[100]!,
+      child: Container(
+        height: height,
+        padding: const EdgeInsets.all(Spacing.md),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(Spacing.radiusMd),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: Spacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: Spacing.xs),
+                  Container(
+                    width: 100,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+lib/presentation/widgets/layout/responsive_scaffold.dart
+dart
+// lib/presentation/widgets/layout/responsive_scaffold.dart
+
+import 'package:flutter/material.dart';
+import '../../../core/utils/responsive_utils.dart';
+import '../../../core/config/theme_config.dart';
+import '../../../core/constants/spacing_constants.dart';
+import 'side_navigation.dart';
+import 'app_drawer.dart';
+
+class ResponsiveScaffold extends StatelessWidget {
+  final String title;
+  final Widget body;
+  final int selectedIndex;
+  final Function(int) onNavigationChanged;
+  final List<Widget>? actions;
+  final Widget? floatingActionButton;
+
+  const ResponsiveScaffold({
+    super.key,
+    required this.title,
+    required this.body,
+    required this.selectedIndex,
+    required this.onNavigationChanged,
+    this.actions,
+    this.floatingActionButton,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final deviceType = ResponsiveUtils.getDeviceType(context);
+
+    switch (deviceType) {
+      case DeviceType.mobile:
+        return _buildMobileLayout(context);
+      case DeviceType.tablet:
+        return _buildTabletLayout(context);
+      case DeviceType.desktop:
+        return _buildDesktopLayout(context);
+    }
+  }
+
+  Widget _buildMobileLayout(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        actions: actions,
+      ),
+      drawer: AppDrawer(
+        selectedIndex: selectedIndex,
+        onItemSelected: onNavigationChanged,
+      ),
+      body: body,
+      floatingActionButton: floatingActionButton,
+      bottomNavigationBar: _buildBottomNavigation(context),
+    );
+  }
+
+  Widget _buildTabletLayout(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          NavigationRail(
+            selectedIndex: selectedIndex,
+            onDestinationSelected: onNavigationChanged,
+            labelType: NavigationRailLabelType.selected,
+            leading: Padding(
+              padding: const EdgeInsets.symmetric(vertical: Spacing.md),
+              child: _buildLogo(compact: true),
+            ),
+            destinations: _buildRailDestinations(),
+          ),
+          const VerticalDivider(width: 1),
+          Expanded(
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(title),
+                actions: actions,
+                automaticallyImplyLeading: false,
+              ),
+              body: body,
+              floatingActionButton: floatingActionButton,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        children: [
+          SideNavigation(
+            selectedIndex: selectedIndex,
+            onItemSelected: onNavigationChanged,
+          ),
+          Expanded(
+            child: Scaffold(
+              appBar: AppBar(
+                title: Text(title),
+                actions: actions,
+                automaticallyImplyLeading: false,
+              ),
+              body: body,
+              floatingActionButton: floatingActionButton,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomNavigation(BuildContext context) {
+    return NavigationBar(
+      selectedIndex: selectedIndex,
+      onDestinationSelected: onNavigationChanged,
+      destinations: const [
+        NavigationDestination(
+          icon: Icon(Icons.dashboard_outlined),
+          selectedIcon: Icon(Icons.dashboard),
+          label: 'Dashboard',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.trending_up_outlined),
+          selectedIcon: Icon(Icons.trending_up),
+          label: 'Trends',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.flag_outlined),
+          selectedIcon: Icon(Icons.flag),
+          label: 'Goals',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.settings_outlined),
+          selectedIcon: Icon(Icons.settings),
+          label: 'Settings',
+        ),
+      ],
+    );
+  }
+
+  List<NavigationRailDestination> _buildRailDestinations() {
+    return const [
+      NavigationRailDestination(
+        icon: Icon(Icons.dashboard_outlined),
+        selectedIcon: Icon(Icons.dashboard),
+        label: Text('Dashboard'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(Icons.trending_up_outlined),
+        selectedIcon: Icon(Icons.trending_up),
+        label: Text('Trends'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(Icons.flag_outlined),
+        selectedIcon: Icon(Icons.flag),
+        label: Text('Goals'),
+      ),
+      NavigationRailDestination(
+        icon: Icon(Icons.settings_outlined),
+        selectedIcon: Icon(Icons.settings),
+        label: Text('Settings'),
+      ),
+    ];
+  }
+
+  Widget _buildLogo({bool compact = false}) {
+    return Container(
+      padding: const EdgeInsets.all(Spacing.sm),
+      child: compact
+          ? const Icon(Icons.analytics, size: 32, color: ThemeConfig.primaryColor)
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.analytics, size: 32, color: ThemeConfig.primaryColor),
+                const SizedBox(width: Spacing.sm),
+                const Text(
+                  'Sellio',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+lib/presentation/widgets/layout/side_navigation.dart
+dart
+// lib/presentation/widgets/layout/side_navigation.dart
+
+import 'package:flutter/material.dart';
+import '../../../core/config/theme_config.dart';
+import '../../../core/constants/spacing_constants.dart';
+
+class SideNavigation extends StatelessWidget {
+  final int selectedIndex;
+  final Function(int) onItemSelected;
+
+  const SideNavigation({
+    super.key,
+    required this.selectedIndex,
+    required this.onItemSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      width: 260,
+      decoration: BoxDecoration(
+        color: isDark ? ThemeConfig.darkSurface : ThemeConfig.lightSurface,
+        border: Border(
+          right: BorderSide(
+            color: isDark ? ThemeConfig.darkBorder : ThemeConfig.lightBorder,
+            width: 1,
+          ),
+        ),
+      ),
+      child: Column(
+        children: [
+          _buildHeader(context),
+          const SizedBox(height: Spacing.md),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: Spacing.sm),
+              children: [
+                _buildSectionTitle('Analytics'),
+                _buildNavItem(
+                  context,
+                  index: 0,
+                  icon: Icons.dashboard_outlined,
+                  selectedIcon: Icons.dashboard,
+                  label: 'Dashboard',
+                ),
+                _buildNavItem(
+                  context,
+                  index: 1,
+                  icon: Icons.trending_up_outlined,
+                  selectedIcon: Icons.trending_up,
+                  label: 'Historical Trends',
+                ),
+                const SizedBox(height: Spacing.md),
+                _buildSectionTitle('Planning'),
+                _buildNavItem(
+                  context,
+                  index: 2,
+                  icon: Icons.flag_outlined,
+                  selectedIcon: Icons.flag,
+                  label: 'Goals & OKRs',
+                ),
+                const SizedBox(height: Spacing.md),
+                _buildSectionTitle('Configuration'),
+                _buildNavItem(
+                  context,
+                  index: 3,
+                  icon: Icons.settings_outlined,
+                  selectedIcon: Icons.settings,
+                  label: 'Settings',
+                ),
+              ],
+            ),
+          ),
+          _buildFooter(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(Spacing.lg),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: ThemeConfig.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.analytics,
+              color: ThemeConfig.primaryColor,
+              size: 28,
+            ),
+          ),
+          const SizedBox(width: Spacing.md),
+          const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Sellio Metrics',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Team Dashboard',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: Spacing.md,
+        vertical: Spacing.xs,
+      ),
+      child: Text(
+        title.toUpperCase(),
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: Colors.grey[500],
+          letterSpacing: 1.2,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+    BuildContext context, {
+    required int index,
+    required IconData icon,
+    required IconData selectedIcon,
+    required String label,
+  }) {
+    final isSelected = selectedIndex == index;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Material(
+        color: isSelected
+            ? ThemeConfig.primaryColor.withOpacity(0.1)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(Spacing.radiusMd),
+        child: InkWell(
+          onTap: () => onItemSelected(index),
+          borderRadius: BorderRadius.circular(Spacing.radiusMd),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: Spacing.md,
+              vertical: Spacing.sm,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  isSelected ? selectedIcon : icon,
+                  size: 22,
+                  color: isSelected
+                      ? ThemeConfig.primaryColor
+                      : (isDark ? Colors.grey[400] : Colors.grey[600]),
+                ),
+                const SizedBox(width: Spacing.md),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    color: isSelected
+                        ? ThemeConfig.primaryColor
+                        : (isDark ? Colors.grey[300] : Colors.grey[700]),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFooter(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(Spacing.md),
+      child: Column(
+        children: [
+          const Divider(),
+          const SizedBox(height: Spacing.sm),
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: ThemeConfig.primaryColor.withOpacity(0.2),
+                child: const Text(
+                  'SS',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: ThemeConfig.primaryColor,
+                  ),
+                ),
+              ),
+              const SizedBox(width: Spacing.sm),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Sellio Squad',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      'Organization',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.more_vert, size: 20),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+lib/presentation/widgets/layout/app_drawer.dart
+dart
+// lib/presentation/widgets/layout/app_drawer.dart
+
+import 'package:flutter/material.dart';
+import '../../../core/config/theme_config.dart';
+import '../../../core/constants/spacing_constants.dart';
+
+class AppDrawer extends StatelessWidget {
+  final int selectedIndex;
+  final Function(int) onItemSelected;
+
+  const AppDrawer({
+    super.key,
+    required this.selectedIndex,
+    required this.onItemSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: Column(
+        children: [
+          _buildDrawerHeader(context),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildDrawerItem(
+                  context,
+                  index: 0,
+                  icon: Icons.dashboard,
+                  label: 'Dashboard',
+                ),
+                _buildDrawerItem(
+                  context,
+                  index: 1,
+                  icon: Icons.trending_up,
+                  label: 'Historical Trends',
+                ),
+                _buildDrawerItem(
+                  context,
+                  index: 2,
+                  icon: Icons.flag,
+                  label: 'Goals & OKRs',
+                ),
+                const Divider(),
+                _buildDrawerItem(
+                  context,
+                  index: 3,
+                  icon: Icons.settings,
+                  label: 'Settings',
+                ),
+              ],
+            ),
+          ),
+          _buildDrawerFooter(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerHeader(BuildContext context) {
+    return DrawerHeader(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [ThemeConfig.primaryColor, ThemeConfig.secondaryColor],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.analytics,
+              color: Colors.white,
+              size: 32,
+            ),
+          ),
+          const Spacer(),
+          const Text(
+            'Sellio Metrics',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Text(
+            'Team Performance Dashboard',
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 13,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem(
+    BuildContext context, {
+    required int index,
+    required IconData icon,
+    required String label,
+  }) {
+    final isSelected = selectedIndex == index;
+
+    return ListTile(
+      leading: Icon(
+        icon,
+        color: isSelected ? ThemeConfig.primaryColor : null,
+      ),
+      title: Text(
+        label,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          color: isSelected ? ThemeConfig.primaryColor : null,
+        ),
+      ),
+      selected: isSelected,
+      selectedTileColor: ThemeConfig.primaryColor.withOpacity(0.1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Spacing.radiusMd),
+      ),
+      onTap: () {
+        Navigator.pop(context);
+        onItemSelected(index);
+      },
+    );
+  }
+
+  Widget _buildDrawerFooter(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(Spacing.md),
+      child: const Row(
+        children: [
+          CircleAvatar(
+            radius: 20,
+            backgroundImage: NetworkImage(
+              'https://github.com/Sellio-Squad.png',
+            ),
+          ),
+          SizedBox(width: Spacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Sellio Squad',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  'github.com/Sellio-Squad',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+lib/presentation/widgets/goals/goal_card.dart
+dart
+// lib/presentation/widgets/goals/goal_card.dart
+
+import 'package:flutter/material.dart';
+import '../../../core/config/theme_config.dart';
+import '../../../core/constants/spacing_constants.dart';
+import '../../../core/utils/date_utils.dart';
+import '../../../core/utils/number_utils.dart';
+import '../../../domain/entities/goals/goal.dart';
+
+class GoalCard extends StatelessWidget {
+  final Goal goal;
+  final VoidCallback? onTap;
+
+  const GoalCard({
+    super.key,
+    required this.goal,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(Spacing.radiusLg),
+        child: Padding(
+          padding: const EdgeInsets.all(Spacing.cardPadding),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context),
+              const SizedBox(height: Spacing.md),
+              _buildProgressSection(context),
+              const SizedBox(height: Spacing.md),
+              _buildFooter(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: _getCategoryColor().withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            _getCategoryIcon(),
+            color: _getCategoryColor(),
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: Spacing.md),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                goal.title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (goal.description != null) ...[
+                const SizedBox(height: Spacing.xxs),
+                Text(
+                  goal.description!,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey[500],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ],
+          ),
+        ),
+        _buildStatusBadge(),
+      ],
+    );
+  }
+
+  Widget _buildStatusBadge() {
+    final color = _getStatusColor();
+    final label = _getStatusLabel();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(Spacing.radiusFull),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProgressSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '${NumberUtils.formatDecimal(goal.currentValue)} / ${NumberUtils.formatDecimal(goal.targetValue)} ${goal.unit}',
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Text(
+              '${goal.progressPercentage.toStringAsFixed(1)}%',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: _getProgressColor(),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: Spacing.xs),
+        Stack(
+          children: [
+            // Background
+            Container(
+              height: 8,
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            // Time progress indicator
+            FractionallySizedBox(
+              widthFactor: goal.timeProgressPercentage / 100,
+              child: Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+            // Value progress
+            FractionallySizedBox(
+              widthFactor: goal.progressPercentage / 100,
+              child: Container(
+                height: 8,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      _getProgressColor(),
+                      _getProgressColor().withOpacity(0.7),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: Spacing.xs),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Time: ${goal.timeProgressPercentage.toStringAsFixed(0)}%',
+              style: TextStyle(
+                fontSize: 11,
+                color: Colors.grey[500],
+              ),
+            ),
+            Text(
+              goal.daysRemaining > 0
+                  ? '${goal.daysRemaining} days remaining'
+                  : 'Ended',
+              style: TextStyle(
+                fontSize: 11,
+                color: goal.daysRemaining <= 7
+                    ? ThemeConfig.warningColor
+                    : Colors.grey[500],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFooter(BuildContext context) {
+    return Row(
+      children: [
+        _buildTag(goal.category, _getCategoryColor()),
+        const SizedBox(width: Spacing.xs),
+        _buildTag(goal.period, Colors.grey),
+        const Spacer(),
+        _buildPriorityIndicator(),
+      ],
+    );
+  }
+
+  Widget _buildTag(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(Spacing.radiusSm),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPriorityIndicator() {
+    final color = _getPriorityColor();
+    return Row(
+      children: [
+        Icon(
+          Icons.flag,
+          size: 14,
+          color: color,
+        ),
+        const SizedBox(width: 4),
+        Text(
+          goal.priority.toUpperCase(),
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Color _getCategoryColor() {
+    switch (goal.category) {
+      case 'velocity':
+        return ThemeConfig.successColor;
+      case 'quality':
+        return ThemeConfig.infoColor;
+      case 'collaboration':
+        return ThemeConfig.primaryColor;
+      case 'delivery':
+        return ThemeConfig.warningColor;
+      case 'growth':
+        return ThemeConfig.secondaryColor;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  IconData _getCategoryIcon() {
+    switch (goal.category) {
+      case 'velocity':
+        return Icons.speed;
+      case 'quality':
+        return Icons.verified;
+      case 'collaboration':
+        return Icons.people;
+      case 'delivery':
+        return Icons.local_shipping;
+      case 'growth':
+        return Icons.trending_up;
+      default:
+        return Icons.flag;
+    }
+  }
+
+  Color _getStatusColor() {
+    switch (goal.status) {
+      case 'achieved':
+        return ThemeConfig.successColor;
+      case 'on_track':
+        return ThemeConfig.infoColor;
+      case 'at_risk':
+        return ThemeConfig.warningColor;
+      case 'behind':
+        return ThemeConfig.errorColor;
+      case 'missed':
+        return Colors.grey;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  String _getStatusLabel() {
+    switch (goal.status) {
+      case 'achieved':
+        return '✓ Achieved';
+      case 'on_track':
+        return 'On Track';
+      case 'at_risk':
+        return 'At Risk';
+      case 'behind':
+        return 'Behind';
+      case 'missed':
+        return 'Missed';
+      case 'not_started':
+        return 'Not Started';
+      default:
+        return goal.status;
+    }
+  }
+
+  Color _getProgressColor() {
+    if (goal.progressPercentage >= goal.timeProgressPercentage) {
+      return ThemeConfig.successColor;
+    } else if (goal.progressPercentage >= goal.timeProgressPercentage * 0.7) {
+      return ThemeConfig.warningColor;
+    } else {
+      return ThemeConfig.errorColor;
+    }
+  }
+
+  Color _getPriorityColor() {
+    switch (goal.priority) {
+      case 'critical':
+        return ThemeConfig.errorColor;
+      case 'high':
+        return ThemeConfig.warningColor;
+      case 'medium':
+        return ThemeConfig.infoColor;
+      case 'low':
+        return Colors.grey;
+      default:
+        return Colors.grey;
+    }
+  }
+}
+lib/presentation/screens/goals/goals_screen.dart
+dart
+// lib/presentation/screens/goals/goals_screen.dart
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../core/config/theme_config.dart';
+import '../../../core/constants/spacing_constants.dart';
+import '../../../core/utils/responsive_utils.dart';
+import '../../providers/goals_provider.dart';
+import '../../widgets/common/responsive_builder.dart';
+import '../../widgets/common/loading_shimmer.dart';
+import '../../widgets/common/stat_card.dart';
+import '../../widgets/goals/goal_card.dart';
+import 'widgets/goal_summary_card.dart';
+import 'widgets/create_goal_dialog.dart';
+
+class GoalsScreen extends StatefulWidget {
+  const GoalsScreen({super.key});
+
+  @override
+  State<GoalsScreen> createState() => _GoalsScreenState();
+}
+
+class _GoalsScreenState extends State<GoalsScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  String _selectedCategory = 'all';
+
+  final List<String> _categories = [
+    'all',
+    'velocity',
+    'quality',
+    'collaboration',
+    'delivery',
+    'growth',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<GoalsProvider>().loadGoals();
+      context.read<GoalsProvider>().loadGoalsSummary();
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<GoalsProvider>(
+      builder: (context, provider, _) {
+        return ResponsivePadding(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await provider.loadGoals();
+              await provider.loadGoalsSummary();
+            },
+            child: CustomScrollView(
+              slivers: [
+                // Summary Section
+                SliverToBoxAdapter(
+                  child: _buildSummarySection(provider),
+                ),
+
+                // Category Filter
+                SliverToBoxAdapter(
+                  child: _buildCategoryFilter(),
+                ),
+
+                // Tab Bar
+                SliverToBoxAdapter(
+                  child: _buildTabBar(),
+                ),
+
+                // Goals List
+                if (provider.isLoading)
+                  const SliverToBoxAdapter(
+                    child: ListLoadingShimmer(itemCount: 3),
+                  )
+                else if (provider.error != null)
+                  SliverToBoxAdapter(
+                    child: _buildErrorState(provider),
+                  )
+                else
+                  _buildGoalsList(provider),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSummarySection(GoalsProvider provider) {
+    if (provider.summary == null) {
+      return const ResponsiveGrid(
+        mobileColumns: 2,
+        tabletColumns: 3,
+        desktopColumns: 5,
+        children: [
+          StatCardLoadingShimmer(),
+          StatCardLoadingShimmer(),
+          StatCardLoadingShimmer(),
+          StatCardLoadingShimmer(),
+          StatCardLoadingShimmer(),
+        ],
+      );
+    }
+
+    final summary = provider.summary!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Goals Overview',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => _showCreateGoalDialog(context),
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('New Goal'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ThemeConfig.primaryColor,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: Spacing.md),
+        ResponsiveGrid(
+          mobileColumns: 2,
+          tabletColumns: 3,
+          desktopColumns: 5,
+          children: [
+            StatCard(
+              title: 'Total Goals',
+              value: '${summary.total}',
+              icon: Icons.flag,
+              color: ThemeConfig.primaryColor,
+            ),
+            StatCard(
+              title: 'On Track',
+              value: '${summary.byStatus['on_track'] ?? 0}',
+              icon: Icons.check_circle,
+              color: ThemeConfig.successColor,
+            ),
+            StatCard(
+              title: 'At Risk',
+              value: '${summary.byStatus['at_risk'] ?? 0}',
+              icon: Icons.warning,
+              color: ThemeConfig.warningColor,
+            ),
+            StatCard(
+              title: 'Achieved',
+              value: '${summary.byStatus['achieved'] ?? 0}',
+              icon: Icons.emoji_events,
+              color: ThemeConfig.accentColor,
+            ),
+            StatCard(
+              title: 'Avg Progress',
+              value: '${summary.averageProgress.toStringAsFixed(0)}%',
+              icon: Icons.speed,
+              color: ThemeConfig.infoColor,
+            ),
+          ],
+        ),
+        const SizedBox(height: Spacing.lg),
+      ],
+    );
+  }
+
+  Widget _buildCategoryFilter() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Filter by Category',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: Spacing.sm),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: _categories.map((category) {
+              final isSelected = _selectedCategory == category;
+              return Padding(
+                padding: const EdgeInsets.only(right: Spacing.xs),
+                child: FilterChip(
+                  label: Text(_formatCategoryLabel(category)),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    setState(() {
+                      _selectedCategory = category;
+                    });
+                  },
+                  selectedColor: ThemeConfig.primaryColor.withOpacity(0.2),
+                  checkmarkColor: ThemeConfig.primaryColor,
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(height: Spacing.md),
+      ],
+    );
+  }
+
+  Widget _buildTabBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(Spacing.radiusMd),
+      ),
+      child: TabBar(
+        controller: _tabController,
+        tabs: const [
+          Tab(text: 'Active'),
+          Tab(text: 'Completed'),
+          Tab(text: 'All'),
+        ],
+        labelColor: ThemeConfig.primaryColor,
+        indicatorColor: ThemeConfig.primaryColor,
+      ),
+    );
+  }
+
+  Widget _buildGoalsList(GoalsProvider provider) {
+    final goals = _filterGoals(provider.goals);
+
+    if (goals.isEmpty) {
+      return SliverToBoxAdapter(
+        child: _buildEmptyState(),
+      );
+    }
+
+    return SliverPadding(
+      padding: const EdgeInsets.only(top: Spacing.md),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final goal = goals[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: Spacing.md),
+              child: GoalCard(
+                goal: goal,
+                onTap: () => _showGoalDetails(context, goal),
+              ),
+            );
+          },
+          childCount: goals.length,
+        ),
+      ),
+    );
+  }
+
+  List<dynamic> _filterGoals(List<dynamic> goals) {
+    var filtered = goals;
+
+    // Filter by category
+    if (_selectedCategory != 'all') {
+      filtered = filtered.where((g) => g.category == _selectedCategory).toList();
+    }
+
+    // Filter by tab
+    switch (_tabController.index) {
+      case 0: // Active
+        filtered = filtered.where((g) => g.isActive && !g.isAchieved).toList();
+        break;
+      case 1: // Completed
+        filtered = filtered.where((g) => g.isAchieved).toList();
+        break;
+      // case 2: All - no filter
+    }
+
+    return filtered;
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(Spacing.xxl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.flag_outlined,
+              size: 64,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: Spacing.md),
+            Text(
+              'No goals found',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: Spacing.xs),
+            Text(
+              'Create your first goal to start tracking progress',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[500],
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: Spacing.lg),
+            ElevatedButton.icon(
+              onPressed: () => _showCreateGoalDialog(context),
+              icon: const Icon(Icons.add),
+              label: const Text('Create Goal'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(GoalsProvider provider) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(Spacing.xxl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 48,
+              color: ThemeConfig.errorColor,
+            ),
+            const SizedBox(height: Spacing.md),
+            Text(
+              'Error loading goals',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[700],
+              ),
+            ),
+            const SizedBox(height: Spacing.xs),
+            Text(
+              provider.error ?? 'Unknown error occurred',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[500],
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: Spacing.lg),
+            ElevatedButton(
+              onPressed: () => provider.loadGoals(),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatCategoryLabel(String category) {
+    if (category == 'all') return 'All';
+    return category[0].toUpperCase() + category.substring(1);
+  }
+
+  void _showCreateGoalDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const CreateGoalDialog(),
+    );
+  }
+
+  void _showGoalDetails(BuildContext context, dynamic goal) {
+    // Navigate to goal details screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GoalDetailsScreen(goalId: goal.id),
+      ),
+    );
+  }
+}
+
+// Placeholder for GoalDetailsScreen
+class GoalDetailsScreen extends StatelessWidget {
+  final String goalId;
+
+  const GoalDetailsScreen({super.key, required this.goalId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Goal Details'),
+      ),
+      body: Center(
+        child: Text('Goal ID: $goalId'),
+      ),
+    );
+  }
+}
+lib/presentation/screens/goals/widgets/create_goal_dialog.dart
+dart
+// lib/presentation/screens/goals/widgets/create_goal_dialog.dart
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../core/config/theme_config.dart';
+import '../../../../core/constants/spacing_constants.dart';
+import '../../../providers/goals_provider.dart';
+
+class CreateGoalDialog extends StatefulWidget {
+  const CreateGoalDialog({super.key});
+
+  @override
+  State<CreateGoalDialog> createState() => _CreateGoalDialogState();
+}
+
+class _CreateGoalDialogState extends State<CreateGoalDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _targetValueController = TextEditingController();
+  final _unitController = TextEditingController();
+
+  String _selectedCategory = 'velocity';
+  String _selectedMetricType = 'commits';
+  String _selectedPeriod = 'quarterly';
+  String _selectedPriority = 'medium';
+  String _selectedOperator = 'gte';
+
+  DateTime _startDate = DateTime.now();
+  DateTime _endDate = DateTime.now().add(const Duration(days: 90));
+
+  final Map<String, List<String>> _categoryMetrics = {
+    'velocity': ['commits', 'pullRequestsMerged', 'pullRequestsOpened'],
+    'quality': ['avgPrReviewTimeHours', 'avgIssueResolutionTimeHours', 'qualityScore'],
+    'collaboration': ['codeReviews', 'activeContributors', 'collaborationScore'],
+    'delivery': ['issuesClosed', 'issueResolutionRate', 'prMergeRate'],
+    'growth': ['activeContributors', 'velocityScore'],
+  };
+
+  final Map<String, String> _metricLabels = {
+    'commits': 'Commits',
+    'pullRequestsMerged': 'PRs Merged',
+    'pullRequestsOpened': 'PRs Opened',
+    'avgPrReviewTimeHours': 'Avg PR Review Time (hours)',
+    'avgIssueResolutionTimeHours': 'Avg Issue Resolution Time (hours)',
+    'codeReviews': 'Code Reviews',
+    'activeContributors': 'Active Contributors',
+    'issuesClosed': 'Issues Closed',
+    'issueResolutionRate': 'Issue Resolution Rate (%)',
+    'prMergeRate': 'PR Merge Rate (%)',
+    'velocityScore': 'Velocity Score',
+    'qualityScore': 'Quality Score',
+    'collaborationScore': 'Collaboration Score',
+  };
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _targetValueController.dispose();
+    _unitController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Spacing.radiusLg),
+      ),
+      child: Container(
+        width: 500,
+        constraints: const BoxConstraints(maxHeight: 700),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHeader(),
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(Spacing.lg),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTitleField(),
+                      const SizedBox(height: Spacing.md),
+                      _buildDescriptionField(),
+                      const SizedBox(height: Spacing.md),
+                      _buildCategoryAndMetricRow(),
+                      const SizedBox(height: Spacing.md),
+                      _buildTargetValueRow(),
+                      const SizedBox(height: Spacing.md),
+                      _buildDateRangeRow(),
+                      const SizedBox(height: Spacing.md),
+                      _buildPeriodAndPriorityRow(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            _buildActions(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(Spacing.lg),
+      decoration: BoxDecoration(
+        color: ThemeConfig.primaryColor.withOpacity(0.1),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(Spacing.radiusLg),
+          topRight: Radius.circular(Spacing.radiusLg),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: ThemeConfig.primaryColor.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.flag,
+              color: ThemeConfig.primaryColor,
+            ),
+          ),
+          const SizedBox(width: Spacing.md),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Create New Goal',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Set a target for your team to achieve',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color
+lib/presentation/screens/goals/widgets/create_goal_dialog.dart (continued)
+dart
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTitleField() {
+    return TextFormField(
+      controller: _titleController,
+      decoration: const InputDecoration(
+        labelText: 'Goal Title',
+        hintText: 'e.g., Increase Development Velocity',
+        prefixIcon: Icon(Icons.title),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a goal title';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildDescriptionField() {
+    return TextFormField(
+      controller: _descriptionController,
+      decoration: const InputDecoration(
+        labelText: 'Description (optional)',
+        hintText: 'Describe the goal and why it matters',
+        prefixIcon: Icon(Icons.description),
+      ),
+      maxLines: 2,
+    );
+  }
+
+  Widget _buildCategoryAndMetricRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: DropdownButtonFormField<String>(
+            value: _selectedCategory,
+            decoration: const InputDecoration(
+              labelText: 'Category',
+              prefixIcon: Icon(Icons.category),
+            ),
+            items: _categoryMetrics.keys.map((category) {
+              return DropdownMenuItem(
+                value: category,
+                child: Text(_formatLabel(category)),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedCategory = value!;
+                _selectedMetricType = _categoryMetrics[value]!.first;
+              });
+            },
+          ),
+        ),
+        const SizedBox(width: Spacing.md),
+        Expanded(
+          child: DropdownButtonFormField<String>(
+            value: _selectedMetricType,
+            decoration: const InputDecoration(
+              labelText: 'Metric',
+              prefixIcon: Icon(Icons.analytics),
+            ),
+            items: _categoryMetrics[_selectedCategory]!.map((metric) {
+              return DropdownMenuItem(
+                value: metric,
+                child: Text(
+                  _metricLabels[metric] ?? metric,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedMetricType = value!;
+                _updateDefaultUnit();
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTargetValueRow() {
+    return Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: DropdownButtonFormField<String>(
+            value: _selectedOperator,
+            decoration: const InputDecoration(
+              labelText: 'Condition',
+              prefixIcon: Icon(Icons.compare_arrows),
+            ),
+            items: const [
+              DropdownMenuItem(value: 'gte', child: Text('≥ At least')),
+              DropdownMenuItem(value: 'gt', child: Text('> Greater than')),
+              DropdownMenuItem(value: 'lte', child: Text('≤ At most')),
+              DropdownMenuItem(value: 'lt', child: Text('< Less than')),
+              DropdownMenuItem(value: 'eq', child: Text('= Exactly')),
+            ],
+            onChanged: (value) {
+              setState(() {
+                _selectedOperator = value!;
+              });
+            },
+          ),
+        ),
+        const SizedBox(width: Spacing.md),
+        Expanded(
+          flex: 2,
+          child: TextFormField(
+            controller: _targetValueController,
+            decoration: const InputDecoration(
+              labelText: 'Target Value',
+              prefixIcon: Icon(Icons.flag),
+            ),
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Required';
+              }
+              if (double.tryParse(value) == null) {
+                return 'Invalid number';
+              }
+              return null;
+            },
+          ),
+        ),
+        const SizedBox(width: Spacing.md),
+        Expanded(
+          child: TextFormField(
+            controller: _unitController,
+            decoration: const InputDecoration(
+              labelText: 'Unit',
+              hintText: 'e.g., commits',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateRangeRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: InkWell(
+            onTap: () => _selectDate(context, true),
+            child: InputDecorator(
+              decoration: const InputDecoration(
+                labelText: 'Start Date',
+                prefixIcon: Icon(Icons.calendar_today),
+              ),
+              child: Text(
+                '${_startDate.day}/${_startDate.month}/${_startDate.year}',
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: Spacing.md),
+        Expanded(
+          child: InkWell(
+            onTap: () => _selectDate(context, false),
+            child: InputDecorator(
+              decoration: const InputDecoration(
+                labelText: 'End Date',
+                prefixIcon: Icon(Icons.event),
+              ),
+              child: Text(
+                '${_endDate.day}/${_endDate.month}/${_endDate.year}',
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPeriodAndPriorityRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: DropdownButtonFormField<String>(
+            value: _selectedPeriod,
+            decoration: const InputDecoration(
+              labelText: 'Period',
+              prefixIcon: Icon(Icons.date_range),
+            ),
+            items: const [
+              DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
+              DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
+              DropdownMenuItem(value: 'quarterly', child: Text('Quarterly')),
+              DropdownMenuItem(value: 'yearly', child: Text('Yearly')),
+            ],
+            onChanged: (value) {
+              setState(() {
+                _selectedPeriod = value!;
+              });
+            },
+          ),
+        ),
+        const SizedBox(width: Spacing.md),
+        Expanded(
+          child: DropdownButtonFormField<String>(
+            value: _selectedPriority,
+            decoration: const InputDecoration(
+              labelText: 'Priority',
+              prefixIcon: Icon(Icons.priority_high),
+            ),
+            items: [
+              DropdownMenuItem(
+                value: 'low',
+                child: Row(
+                  children: [
+                    Icon(Icons.flag, color: Colors.grey[400], size: 18),
+                    const SizedBox(width: 8),
+                    const Text('Low'),
+                  ],
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'medium',
+                child: Row(
+                  children: [
+                    Icon(Icons.flag, color: ThemeConfig.infoColor, size: 18),
+                    const SizedBox(width: 8),
+                    const Text('Medium'),
+                  ],
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'high',
+                child: Row(
+                  children: [
+                    Icon(Icons.flag, color: ThemeConfig.warningColor, size: 18),
+                    const SizedBox(width: 8),
+                    const Text('High'),
+                  ],
+                ),
+              ),
+              DropdownMenuItem(
+                value: 'critical',
+                child: Row(
+                  children: [
+                    Icon(Icons.flag, color: ThemeConfig.errorColor, size: 18),
+                    const SizedBox(width: 8),
+                    const Text('Critical'),
+                  ],
+                ),
+              ),
+            ],
+            onChanged: (value) {
+              setState(() {
+                _selectedPriority = value!;
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActions() {
+    return Container(
+      padding: const EdgeInsets.all(Spacing.lg),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).dividerColor,
+          ),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          const SizedBox(width: Spacing.md),
+          ElevatedButton(
+            onPressed: _submitGoal,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: ThemeConfig.primaryColor,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Create Goal'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _selectDate(BuildContext context, bool isStartDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: isStartDate ? _startDate : _endDate,
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+    );
+
+    if (picked != null) {
+      setState(() {
+        if (isStartDate) {
+          _startDate = picked;
+          if (_endDate.isBefore(_startDate)) {
+            _endDate = _startDate.add(const Duration(days: 90));
+          }
+        } else {
+          _endDate = picked;
+        }
+      });
+    }
+  }
+
+  void _updateDefaultUnit() {
+    final metric = _selectedMetricType;
+    String unit = '';
+
+    if (metric.contains('Hours') || metric.contains('Time')) {
+      unit = 'hours';
+    } else if (metric.contains('Rate') || metric.contains('Score')) {
+      unit = '%';
+    } else if (metric == 'commits') {
+      unit = 'commits';
+    } else if (metric.contains('pullRequest') || metric.contains('PR')) {
+      unit = 'PRs';
+    } else if (metric.contains('issue') || metric.contains('Issue')) {
+      unit = 'issues';
+    } else if (metric.contains('Contributor')) {
+      unit = 'contributors';
+    } else if (metric.contains('Review')) {
+      unit = 'reviews';
+    }
+
+    _unitController.text = unit;
+  }
+
+  String _formatLabel(String label) {
+    return label[0].toUpperCase() + label.substring(1);
+  }
+
+  Future<void> _submitGoal() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    final goalData = {
+      'title': _titleController.text,
+      'description': _descriptionController.text.isNotEmpty
+          ? _descriptionController.text
+          : null,
+      'type': 'target',
+      'category': _selectedCategory,
+      'metricType': _selectedMetricType,
+      'targetValue': double.parse(_targetValueController.text),
+      'targetOperator': _selectedOperator,
+      'unit': _unitController.text,
+      'startDate': _startDate.toIso8601String(),
+      'endDate': _endDate.toIso8601String(),
+      'period': _selectedPeriod,
+      'priority': _selectedPriority,
+    };
+
+    try {
+      await context.read<GoalsProvider>().createGoal(goalData);
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Goal created successfully!'),
+            backgroundColor: ThemeConfig.successColor,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create goal: $e'),
+            backgroundColor: ThemeConfig.errorColor,
+          ),
+        );
+      }
+    }
+  }
+}
+lib/presentation/providers/goals_provider.dart
+dart
+// lib/presentation/providers/goals_provider.dart
+
+import 'package:flutter/foundation.dart';
+import '../../data/datasources/remote/goals_remote_datasource.dart';
+import '../../data/models/goals/goal_model.dart';
+import '../../domain/entities/goals/goal.dart';
+
+class GoalsProvider extends ChangeNotifier {
+  final GoalsRemoteDataSource _dataSource;
+
+  GoalsProvider({GoalsRemoteDataSource? dataSource})
+      : _dataSource = dataSource ?? GoalsRemoteDataSource();
+
+  List<Goal> _goals = [];
+  GoalsSummary? _summary;
+  Goal? _selectedGoal;
+  GoalPrediction? _selectedGoalPrediction;
+
+  bool _isLoading = false;
+  String? _error;
+
+  // Getters
+  List<Goal> get goals => _goals;
+  GoalsSummary? get summary => _summary;
+  Goal? get selectedGoal => _selectedGoal;
+  GoalPrediction? get selectedGoalPrediction => _selectedGoalPrediction;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+
+  // Filtered getters
+  List<Goal> get activeGoals => _goals.where((g) => g.isActive && !g.isAchieved).toList();
+  List<Goal> get achievedGoals => _goals.where((g) => g.isAchieved).toList();
+  List<Goal> get atRiskGoals => _goals.where((g) => g.isAtRisk).toList();
+
+  Future<void> loadGoals() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _goals = await _dataSource.getGoals();
+    } catch (e) {
+      _error = e.toString();
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> loadGoalsSummary() async {
+    try {
+      _summary = await _dataSource.getGoalsSummary();
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadGoalById(String goalId) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _selectedGoal = await _dataSource.getGoalById(goalId);
+    } catch (e) {
+      _error = e.toString();
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> loadGoalPrediction(String goalId) async {
+    try {
+      _selectedGoalPrediction = await _dataSource.getGoalPrediction(goalId);
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> createGoal(Map<String, dynamic> goalData) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final newGoal = await _dataSource.createGoal(goalData);
+      _goals.insert(0, newGoal);
+      await loadGoalsSummary();
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateGoal(String goalId, Map<String, dynamic> updates) async {
+    try {
+      final updatedGoal = await _dataSource.updateGoal(goalId, updates);
+      final index = _goals.indexWhere((g) => g.id == goalId);
+      if (index != -1) {
+        _goals[index] = updatedGoal;
+      }
+      if (_selectedGoal?.id == goalId) {
+        _selectedGoal = updatedGoal;
+      }
+      await loadGoalsSummary();
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> deleteGoal(String goalId) async {
+    try {
+      await _dataSource.deleteGoal(goalId);
+      _goals.removeWhere((g) => g.id == goalId);
+      if (_selectedGoal?.id == goalId) {
+        _selectedGoal = null;
+      }
+      await loadGoalsSummary();
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> updateAllGoalsProgress() async {
+    try {
+      await _dataSource.updateGoalsProgress();
+      await loadGoals();
+      await loadGoalsSummary();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
+  Future<void> createDefaultOKRs(String quarter, int year) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _dataSource.createDefaultOKRs(quarter, year);
+      await loadGoals();
+      await loadGoalsSummary();
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void clearError() {
+    _error = null;
+    notifyListeners();
+  }
+
+  void clearSelectedGoal() {
+    _selectedGoal = null;
+    _selectedGoalPrediction = null;
+    notifyListeners();
+  }
+}
+lib/presentation/providers/historical_provider.dart
+dart
+// lib/presentation/providers/historical_provider.dart
+
+import 'package:flutter/foundation.dart';
+import '../../data/datasources/remote/historical_remote_datasource.dart';
+import '../../data/models/historical/trend_model.dart';
+import '../../domain/entities/historical/trend.dart';
+
+class HistoricalProvider extends ChangeNotifier {
+  final HistoricalRemoteDataSource _dataSource;
+
+  HistoricalProvider({HistoricalRemoteDataSource? dataSource})
+      : _dataSource = dataSource ?? HistoricalRemoteDataSource();
+
+  Map<String, TrendData> _allTrends = {};
+  TrendData? _selectedTrend;
+  PeriodComparison? _periodComparison;
+
+  bool _isLoading = false;
+  String? _error;
+
+  int _selectedDays = 30;
+  String _selectedMetric = 'commits';
+
+  // Getters
+  Map<String, TrendData> get allTrends => _allTrends;
+  TrendData? get selectedTrend => _selectedTrend;
+  PeriodComparison? get periodComparison => _periodComparison;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+  int get selectedDays => _selectedDays;
+  String get selectedMetric => _selectedMetric;
+
+  // Quick access to common trends
+  TrendData? get commitsTrend => _allTrends['commits'];
+  TrendData? get prsMergedTrend => _allTrends['pullRequestsMerged'];
+  TrendData? get issuesClosedTrend => _allTrends['issuesClosed'];
+  TrendData? get reviewTimeTrend => _allTrends['avgPrReviewTimeHours'];
+  TrendData? get codeReviewsTrend => _allTrends['codeReviews'];
+
+  Future<void> loadAllTrends({int? days}) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final daysToLoad = days ?? _selectedDays;
+      _allTrends = await _dataSource.getAllTrends(daysToLoad);
+      _selectedDays = daysToLoad;
+    } catch (e) {
+      _error = e.toString();
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> loadTrend(String metric, {int? days, String groupBy = 'day'}) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final daysToLoad = days ?? _selectedDays;
+      _selectedTrend = await _dataSource.getTrend(metric, daysToLoad, groupBy);
+      _selectedMetric = metric;
+      _selectedDays = daysToLoad;
+    } catch (e) {
+      _error = e.toString();
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> loadPeriodComparison({int period1Days = 7, int period2Days = 7}) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _periodComparison = await _dataSource.comparePeriods(period1Days, period2Days);
+    } catch (e) {
+      _error = e.toString();
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> createSnapshot() async {
+    try {
+      await _dataSource.createSnapshot();
+      await loadAllTrends();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
+  void setSelectedDays(int days) {
+    _selectedDays = days;
+    notifyListeners();
+  }
+
+  void setSelectedMetric(String metric) {
+    _selectedMetric = metric;
+    notifyListeners();
+  }
+
+  void clearError() {
+    _error = null;
+    notifyListeners();
+  }
+}
+lib/data/datasources/remote/goals_remote_datasource.dart
+dart
+// lib/data/datasources/remote/goals_remote_datasource.dart
+
+import '../../../core/network/api_client.dart';
+import '../../models/goals/goal_model.dart';
+import '../../../domain/entities/goals/goal.dart';
+
+class GoalsRemoteDataSource {
+  final ApiClient _client;
+
+  GoalsRemoteDataSource({ApiClient? client}) : _client = client ?? ApiClient();
+
+  Future<List<Goal>> getGoals() async {
+    final response = await _client.get('/goals');
+    final List<dynamic> data = response is List ? response : (response['data'] ?? []);
+    return data.map((json) => GoalModel.fromJson(json)).toList();
+  }
+
+  Future<Goal> getGoalById(String id) async {
+    final response = await _client.get('/goals/$id');
+    return GoalModel.fromJson(response);
+  }
+
+  Future<GoalsSummary> getGoalsSummary() async {
+    final response = await _client.get('/goals/summary');
+    return GoalsSummaryModel.fromJson(response);
+  }
+
+  Future<List<Goal>> getGoalsExpiringSoon({int days = 7}) async {
+    final response = await _client.get('/goals/expiring', queryParams: {
+      'days': days.toString(),
+    });
+    final List<dynamic> data = response is List ? response : (response['data'] ?? []);
+    return data.map((json) => GoalModel.fromJson(json)).toList();
+  }
+
+  Future<Goal> createGoal(Map<String, dynamic> goalData) async {
+    final response = await _client.post('/goals', body: goalData);
+    return GoalModel.fromJson(response);
+  }
+
+  Future<Goal> updateGoal(String id, Map<String, dynamic> updates) async {
+    final response = await _client.put('/goals/$id', body: updates);
+    return GoalModel.fromJson(response);
+  }
+
+  Future<void> deleteGoal(String id) async {
+    await _client.delete('/goals/$id');
+  }
+
+  Future<List<GoalProgressModel>> getGoalProgress(String id, {int days = 30}) async {
+    final response = await _client.get('/goals/$id/progress', queryParams: {
+      'days': days.toString(),
+    });
+    final List<dynamic> data = response is List ? response : (response['data'] ?? []);
+    return data.map((json) => GoalProgressModel.fromJson(json)).toList();
+  }
+
+  Future<GoalPrediction> getGoalPrediction(String id) async {
+    final response = await _client.get('/goals/$id/prediction');
+    return GoalPredictionModel.fromJson(response);
+  }
+
+  Future<void> updateGoalsProgress() async {
+    await _client.post('/goals/update-progress');
+  }
+
+  Future<void> createDefaultOKRs(String quarter, int year) async {
+    await _client.post('/goals/default-okrs', body: {
+      'quarter': quarter,
+      'year': year,
+    });
+  }
+}
+
+class GoalProgressModel {
+  final String goalId;
+  final DateTime date;
+  final double value;
+  final double progressPercentage;
+  final String status;
+  final double valueDelta;
+  final double progressDelta;
+
+  GoalProgressModel({
+    required this.goalId,
+    required this.date,
+    required this.value,
+    required this.progressPercentage,
+    required this.status,
+    required this.valueDelta,
+    required this.progressDelta,
+  });
+
+  factory GoalProgressModel.fromJson(Map<String, dynamic> json) {
+    return GoalProgressModel(
+      goalId: json['goalId'],
+      date: DateTime.parse(json['date']),
+      value: (json['value'] as num).toDouble(),
+      progressPercentage: (json['progressPercentage'] as num).toDouble(),
+      status: json['status'],
+      valueDelta: (json['valueDelta'] as num?)?.toDouble() ?? 0,
+      progressDelta: (json['progressDelta'] as num?)?.toDouble() ?? 0,
+    );
+  }
+}
+lib/data/datasources/remote/historical_remote_datasource.dart
+dart
+// lib/data/datasources/remote/historical_remote_datasource.dart
+
+import '../../../core/network/api_client.dart';
+import '../../models/historical/trend_model.dart';
+import '../../../domain/entities/historical/trend.dart';
+
+class HistoricalRemoteDataSource {
+  final ApiClient _client;
+
+  HistoricalRemoteDataSource({ApiClient? client}) : _client = client ?? ApiClient();
+
+  Future<Map<String, TrendData>> getAllTrends(int days) async {
+    final response = await _client.get('/historical/trends', queryParams: {
+      'days': days.toString(),
+    });
+
+    final Map<String, TrendData> trends = {};
+    response.forEach((key, value) {
+      if (value is Map<String, dynamic>) {
+        trends[key] = TrendDataModel.fromJson(value);
+      }
+    });
+
+    return trends;
+  }
+
+  Future<TrendData> getTrend(String metric, int days, String groupBy) async {
+    final response = await _client.get('/historical/trends/$metric', queryParams: {
+      'days': days.toString(),
+      'groupBy': groupBy,
+    });
+    return TrendDataModel.fromJson(response);
+  }
+
+  Future<PeriodComparison> comparePeriods(int period1Days, int period2Days) async {
+    final response = await _client.get('/historical/compare', queryParams: {
+      'period1': period1Days.toString(),
+      'period2': period2Days.toString(),
+    });
+    return PeriodComparisonModel.fromJson(response);
+  }
+
+  Future<List<SnapshotModel>> getSnapshots({int days = 30, String period = 'daily'}) async {
+    final response = await _client.get('/historical/snapshots', queryParams: {
+      'days': days.toString(),
+      'period': period,
+    });
+    final List<dynamic> data = response is List ? response : (response['data'] ?? []);
+    return data.map((json) => SnapshotModel.fromJson(json)).toList();
+  }
+
+  Future<List<ContributorHistoryModel>> getContributorHistory(String username, int days) async {
+    final response = await _client.get('/historical/contributors/$username', queryParams: {
+      'days': days.toString(),
+    });
+    final List<dynamic> data = response is List ? response : (response['data'] ?? []);
+    return data.map((json) => ContributorHistoryModel.fromJson(json)).toList();
+  }
+
+  Future<void> createSnapshot() async {
+    await _client.post('/historical/snapshots');
+  }
+}
+
+class SnapshotModel {
+  final String id;
+  final DateTime date;
+  final String period;
+  final Map<String, dynamic> summary;
+  final Map<String, dynamic> metrics;
+  final Map<String, dynamic> scores;
+
+  SnapshotModel({
+    required this.id,
+    required this.date,
+    required this.period,
+    required this.summary,
+    required this.metrics,
+    required this.scores,
+  });
+
+  factory SnapshotModel.fromJson(Map<String, dynamic> json) {
+    return SnapshotModel(
+      id: json['_id'] ?? json['id'],
+      date: DateTime.parse(json['date']),
+      period: json['period'],
+      summary: json['summary'] ?? {},
+      metrics: json['metrics'] ?? {},
+      scores: json['scores'] ?? {},
+    );
+  }
+}
+
+class ContributorHistoryModel {
+  final DateTime date;
+  final int commits;
+  final int pullRequestsOpened;
+  final int codeReviews;
+  final int activityScore;
+
+  ContributorHistoryModel({
+    required this.date,
+    required this.commits,
+    required this.pullRequestsOpened,
+    required this.codeReviews,
+    required this.activityScore,
+  });
+
+  factory ContributorHistoryModel.fromJson(Map<String, dynamic> json) {
+    return ContributorHistoryModel(
+      date: DateTime.parse(json['date']),
+      commits: json['commits'] ?? 0,
+      pullRequestsOpened: json['pullRequestsOpened'] ?? 0,
+      codeReviews: json['codeReviews'] ?? 0,
+      activityScore: json['activityScore'] ?? 0,
+    );
+  }
+}
+lib/presentation/screens/historical/historical_screen.dart
+dart
+// lib/presentation/screens/historical/historical_screen.dart
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:fl_chart/fl_chart.dart';
+import '../../../core/config/theme_config.dart';
+import '../../../core/constants/spacing_constants.dart';
+import '../../../core/utils/responsive_utils.dart';
+import '../../../core/utils/number_utils.dart';
+import '../../../domain/entities/historical/trend.dart';
+import '../../providers/historical_provider.dart';
+import '../../widgets/common/responsive_builder.dart';
+import '../../widgets/common/loading_shimmer.dart';
+import '../../widgets/common/stat_card.dart';
+
+class HistoricalScreen extends StatefulWidget {
+  const HistoricalScreen({super.key});
+
+  @override
+  State<HistoricalScreen> createState() => _HistoricalScreenState();
+}
+
+class _HistoricalScreenState extends State<HistoricalScreen> {
+  final List<int> _dayOptions = [7, 14, 30, 60, 90];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HistoricalProvider>().loadAllTrends();
+      context.read<HistoricalProvider>().loadPeriodComparison();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<HistoricalProvider>(
+      builder: (context, provider, _) {
+        return ResponsivePadding(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await provider.loadAllTrends();
+              await provider.loadPeriodComparison();
+            },
+            child: CustomScrollView(
+              slivers: [
+                // Header with date range selector
+                SliverToBoxAdapter(
+                  child: _buildHeader(provider),
+                ),
+
+                // Period Comparison Cards
+                SliverToBoxAdapter(
+                  child: _buildPeriodComparison(provider),
+                ),
+
+                // Trend Charts
+                if (provider.isLoading)
+                  const SliverToBoxAdapter(
+                    child: ChartLoadingShimmer(),
+                  )
+                else ...[
+                  SliverToBoxAdapter(
+                    child: _buildTrendChart(
+                      provider,
+                      'commits',
+                      'Commit Activity',
+                      ThemeConfig.successColor,
+                      Icons.commit,
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _buildTrendChart(
+                      provider,
+                      'pullRequestsMerged',
+                      'Pull Requests Merged',
+                      ThemeConfig.primaryColor,
+                      Icons.merge,
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _buildTrendChart(
+                      provider,
+                      'issuesClosed',
+                      'Issues Closed',
+                      ThemeConfig.warningColor,
+                      Icons.bug_report,
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: _buildTrendChart(
+                      provider,
+                      'codeReviews',
+                      'Code Reviews',
+                      ThemeConfig.accentColor,
+                      Icons.rate_review,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildHeader(HistoricalProvider provider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Historical Trends',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: Spacing.xxs),
+                Text(
+                  'Track your team\'s performance over time',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                _buildDaySelector(provider),
+                const SizedBox(width: Spacing.sm),
+                IconButton(
+                  onPressed: () => provider.createSnapshot(),
+                  icon: const Icon(Icons.camera_alt),
+                  tooltip: 'Create Snapshot',
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: Spacing.lg),
+      ],
+    );
+  }
+
+  Widget _buildDaySelector(HistoricalProvider provider) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: Spacing.sm),
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).dividerColor),
+        borderRadius: BorderRadius.circular(Spacing.radiusMd),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<int>(
+          value: provider.selectedDays,
+          items: _dayOptions.map((days) {
+            return DropdownMenuItem(
+              value: days,
+              child: Text('Last $days days'),
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null) {
+              provider.loadAllTrends(days: value);
+              provider.loadPeriodComparison(
+                period1Days: value ~/ 2,
+                period2Days: value ~/ 2,
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPeriodComparison(HistoricalProvider provider) {
+    if (provider.periodComparison == null) {
+      return const ResponsiveGrid(
+        mobileColumns: 2,
+        tabletColumns: 3,
+        desktopColumns: 5,
+        children: [
+          StatCardLoadingShimmer(),
+          StatCardLoadingShimmer(),
+          StatCardLoadingShimmer(),
+          StatCardLoadingShimmer(),
+          StatCardLoadingShimmer(),
+        ],
+      );
+    }
+
+    final comparison = provider.periodComparison!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Period Comparison',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: Spacing.sm),
+        Text(
+          'Comparing recent ${provider.selectedDays ~/ 2} days vs previous ${provider.selectedDays ~/ 2} days',
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.grey[500],
+          ),
+        ),
+        const SizedBox(height: Spacing.md),
+        ResponsiveGrid(
+          mobileColumns: 2,
+          tabletColumns: 3,
+          desktopColumns: 5,
+          children: [
+            if (comparison.metrics['commits'] != null)
+              _buildComparisonCard(
+                'Commits',
+                comparison.metrics['commits']!,
+                Icons.commit,
+                ThemeConfig.successColor,
+              ),
+            if (comparison.metrics['pullRequestsMerged'] != null)
+              _buildComparisonCard(
+                'PRs Merged',
+                comparison.metrics['pullRequestsMerged']!,
+                Icons.merge,
+                ThemeConfig.primaryColor,
+              ),
+            if (comparison.metrics['issuesClosed'] != null)
+              _buildComparisonCard(
+                'Issues Closed',
+                comparison.metrics['issuesClosed']!,
+                Icons.check_circle,
+                ThemeConfig.warningColor,
+              ),
+            if (comparison.metrics['codeReviews'] != null)
+              _buildComparisonCard(
+                'Code Reviews',
+                comparison.metrics['codeReviews']!,
+                Icons.rate_review,
+                ThemeConfig.accentColor,
+              ),
+            if (comparison.metrics['avgPrReviewTimeHours'] != null)
+              _buildComparisonCard(
+                'Avg PR Time',
+                comparison.metrics['avgPrReviewTimeHours']!,
+                Icons.timer,
+                ThemeConfig.infoColor,
+                invertColors: true,
+              ),
+          ],
+        ),
+        const SizedBox(height: Spacing.lg),
+      ],
+    );
+  }
+
+  Widget _buildComparisonCard(
+    String title,
+    MetricComparison comparison,
+    IconData icon,
+    Color color, {
+    bool invertColors = false,
+  }) {
+    final isPositive = invertColors ? comparison.change < 0 : comparison.change > 0;
+    final changeColor = isPositive ? ThemeConfig.successColor : ThemeConfig.errorColor;
+
+    return StatCard(
+      title: title,
+      value: NumberUtils.formatCompact(comparison.current),
+      icon: icon,
+      color: color,
+      subtitle: 'was ${NumberUtils.formatCompact(comparison.previous)}',
+      change: comparison.changePercentage,
+    );
+  }
+
+  Widget _buildTrendChart(
+    HistoricalProvider provider,
+    String metricKey,
+    String title,
+    Color color,
+    IconData icon,
+  ) {
+    final trend = provider.allTrends[metricKey];
+
+    if (trend == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: Spacing.lg),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(Spacing.cardPaddingLarge),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildChartHeader(title, trend, color, icon),
+              const SizedBox(height: Spacing.lg),
+              SizedBox(
+                height: 250,
+                child: _buildLineChart(trend, color),
+              ),
+              const SizedBox(height: Spacing.md),
+              _buildChartSummary(trend, color),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChartHeader(String title, TrendData trend, Color color, IconData icon) {
+    final trendInfo = trend.trend;
+    final trendIcon = trendInfo.isUp
+        ? Icons.trending_up
+        : trendInfo.isDown
+            ? Icons.trending_down
+            : Icons.trending_flat;
+    final trendColor = trendInfo.isUp
+        ? ThemeConfig.successColor
+        : trendInfo.isDown
+            ? ThemeConfig.errorColor
+            : Colors.grey;
+
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: color, size: 24),
+        ),
+        const SizedBox(width: Spacing.md),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                trend.period,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey[500],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: trendColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(Spacing.radiusFull),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(trendIcon, size: 16, color: trendColor),
+              const SizedBox(width: 4),
+              Text(
+                '${trendInfo.strength.toStringAsFixed(0)}%',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: trendColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLineChart(TrendData trend, Color color) {
+    final dataPoints = trend.dataPoints;
+
+    if (dataPoints.isEmpty) {
+      return const Center(child: Text('No data available'));
+    }
+
+    final spots = dataPoints.asMap().entries.map((entry) {
+      return FlSpot(entry.key.toDouble(), entry.value.value);
+    }).toList();
+
+    final maxY = dataPoints.map((d) => d.value).reduce((a, b) => a > b ? a : b);
+    final minY = dataPoints.map((d) => d.value).reduce((a, b) => a < b ? a : b);
+    final padding = (maxY - minY) * 0.1;
+
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: (maxY - minY) / 4,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: Colors.grey.withOpacity(0.2),
+              strokeWidth: 1,
+            );
+          },
+        ),
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              interval: (dataPoints.length / 6).ceil().toDouble(),
+              getTitlesWidget: (value, meta) {
+                final index = value.toInt();
+                if (index < 0 || index >= dataPoints.length) {
+                  return const SizedBox.shrink();
+                }
+                final date = dataPoints[index].date;
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    date.substring(5),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 45,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  NumberUtils.formatCompact(value),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey[500],
+                  ),
+                );
+              },
+            ),
+          ),
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        ),
+        borderData: FlBorderData(show: false),
+        minY: (minY - padding).clamp(0, double.infinity),
+        maxY: maxY + padding,
+        lineBarsData: [
+          LineChartBarData(
+            spots: spots,
+            isCurved: true,
+            color: color,
+            barWidth: 3,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
+              show: dataPoints.length <= 15,
+              getDotPainter: (spot, percent, bar, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: color,
+                  strokeWidth: 2,
+                  strokeColor: Colors.white,
+                );
+              },
+            ),
+            belowBarData: BarAreaData(
+              show: true,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  color.withOpacity(0.3),
+                  color.withOpacity(0.0),
+                ],
+              ),
+            ),
+          ),
+        ],
+        lineTouchData: LineTouchData(
+          touchTooltipData: LineTouchTooltipData(
+            tooltipBgColor: Theme.of(context).cardColor,
+            tooltipRoundedRadius: 8,
+            getTooltipItems: (touchedSpots) {
+              return touchedSpots.map((spot) {
+                final index = spot.spotIndex;
+                final dataPoint = dataPoints[index];
+                return LineTooltipItem(
+                  '${dataPoint.date}\n${NumberUtils.formatDecimal(dataPoint.value)}',
+                  TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                );
+              }).toList();
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChartSummary(TrendData trend, Color color) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _buildSummaryItem('Total', NumberUtils.formatCompact(trend.summary.total), color),
+        _buildSummaryItem('Average', NumberUtils.formatCompact(trend.summary.average), Colors.grey),
+        _buildSummaryItem('Min', NumberUtils.formatCompact(trend.summary.min), ThemeConfig.errorColor),
+        _buildSummaryItem('Max', NumberUtils.formatCompact(trend.summary.max), ThemeConfig.successColor),
+      ],
+    );
+  }
+
+  Widget _buildSummaryItem(String label, String value, Color color) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[500],
+          ),
+        ),
+      ],
+    );
+  }
+}
+lib/main.dart
+dart
+// lib/main.dart
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'core/config/theme_config.dart';
+import 'presentation/providers/metrics_provider.dart';
+import 'presentation/providers/historical_provider.dart';
+import 'presentation/providers/goals_provider.dart';
+import 'presentation/widgets/layout/responsive_scaffold.dart';
+import 'presentation/screens/dashboard/dashboard_screen.dart';
+import 'presentation/screens/historical/historical_screen.dart';
+import 'presentation/screens/goals/goals_screen.dart';
+import 'presentation/screens/settings/settings_screen.dart';
+
+void main() {
+  runApp(const SellioMetricsApp());
+}
+
+class SellioMetricsApp extends StatelessWidget {
+  const SellioMetricsApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => MetricsProvider()),
+        ChangeNotifierProvider(create: (_) => HistoricalProvider()),
+        ChangeNotifierProvider(create: (_) => GoalsProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) {
+          return MaterialApp(
+            title: 'Sellio Metrics',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeConfig.lightTheme,
+            darkTheme: ThemeConfig.darkTheme,
+            themeMode: themeProvider.themeMode,
+            home: const MainScreen(),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _screens = const [
+    DashboardScreen(),
+    HistoricalScreen(),
+    GoalsScreen(),
+    SettingsScreen(),
+  ];
+
+  final List<String> _titles = const [
+    'Dashboard',
+    'Historical Trends',
+    'Goals & OKRs',
+    'Settings',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveScaffold(
+      title: _titles[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _screens,
+      ),
+      selectedIndex: _selectedIndex,
+      onNavigationChanged: (index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+      },
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          onPressed: _refreshCurrentScreen,
+          tooltip: 'Refresh',
+        ),
+      ],
+    );
+  }
+
+  void _refreshCurrentScreen() {
+    switch (_selectedIndex) {
+      case 0:
+        context.read<MetricsProvider>().loadAllMetrics();
+        break;
+      case 1:
+        context.read<HistoricalProvider>().loadAllTrends();
+        break;
+      case 2:
+        context.read<GoalsProvider>().loadGoals();
+        break;
+    }
+  }
+}
+
+class ThemeProvider extends ChangeNotifier {
+  ThemeMode _themeMode = ThemeMode.dark;
+
+  ThemeMode get themeMode => _themeMode;
+  bool get isDarkMode => _themeMode == ThemeMode.dark;
+
+  void toggleTheme() {
+    _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    notifyListeners();
+  }
+
+  void setThemeMode(ThemeMode mode) {
+    _themeMode = mode;
+    notifyListeners();
+  }
+}
+lib/presentation/screens/settings/settings_screen.dart
+dart
+// lib/presentation/screens/settings/settings_screen.dart
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../core/config/theme_config.dart';
+import '../../../core/constants/spacing_constants.dart';
+import '../../../main.dart';
+import '../../widgets/common/responsive_builder.dart';
+
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ResponsivePadding(
+      child: ListView(
+        children: [
+          _buildSection(
+            context,
+            title: 'Appearance',
+            children: [
+              _buildThemeToggle(context),
+            ],
+          ),
+          _buildSection(
+            context,
+            title: 'Data & Sync',
+            children: [
+              _buildSettingsTile(
+                context,
+                icon: Icons.sync,
+                title: 'Auto-refresh interval',
+                subtitle: 'Every 5 minutes',
+                onTap: () => _showIntervalPicker(context),
+              ),
+              _buildSettingsTile(
+                context,
+                icon: Icons.camera_alt,
+                title: 'Create Snapshot Now',
+                subtitle: 'Save current metrics as a snapshot',
+                onTap: () => _createSnapshot(context),
+              ),
+            ],
+          ),
+          _buildSection(
+            context,
+            title: 'Goals',
+            children: [
+              _buildSettingsTile(
+                context,
+                icon: Icons.flag,
+                title: 'Create Default OKRs',
+                subtitle: 'Generate standard quarterly goals',
+                onTap: () => _showCreateOKRsDialog(context),
+              ),
+              _buildSettingsTile(
+                context,
+                icon: Icons.refresh,
+                title: 'Update Goals Progress',
+                subtitle: 'Recalculate all goals based on current data',
+                onTap: () => _updateGoalsProgress(context),
+              ),
+            ],
+          ),
+          _buildSection(
+            context,
+            title: 'About',
+            children: [
+              _buildSettingsTile(
+                context,
+                icon: Icons.info,
+                title: 'Version',
+                subtitle: '1.0.0',
+                onTap: null,
+              ),
+              _buildSettingsTile(
+                context,
+                icon: Icons.code,
+                title: 'GitHub Repository',
+                subtitle: 'github.com/Sellio-Squad',
+                onTap: () => _openGitHub(context),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSection(
+    BuildContext context, {
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: Spacing.md,
+          ),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        Card(
+          child: Column(
+            children: children,
+          ),
+        ),
+        const SizedBox(height: Spacing.md),
+      ],
+    );
+  }
+
+  Widget _buildThemeToggle(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+
+    return ListTile(
+      leading: Icon(
+        themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+        color: ThemeConfig.primaryColor,
+      ),
+      title: const Text('Theme'),
+      subtitle: Text(themeProvider.isDarkMode ? 'Dark mode' : 'Light mode'),
+      trailing: Switch(
+        value: themeProvider.isDarkMode,
+        onChanged: (_) => themeProvider.toggleTheme(),
+        activeColor: ThemeConfig.primaryColor,
+      ),
+    );
+  }
+
+  Widget _buildSettingsTile(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback? onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: ThemeConfig.primaryColor),
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: onTap != null ? const Icon(Icons.chevron_right) : null,
+      onTap: onTap,
+    );
+  }
+
+  void _showIntervalPicker(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Auto-refresh Interval'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildIntervalOption(context, '1 minute', 1),
+            _buildIntervalOption(context, '5 minutes', 5),
+            _buildIntervalOption(context, '15 minutes', 15),
+            _buildIntervalOption(context, '30 minutes', 30),
+            _buildIntervalOption(context, 'Never', 0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIntervalOption(BuildContext context, String label, int minutes) {
+    return ListTile(
+      title: Text(label),
+      onTap: () {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Interval set to $label')),
+        );
+      },
+    );
+  }
+
+  void _createSnapshot(BuildContext context) {
+    // Would call provider to create snapshot
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Creating snapshot...'),
+        backgroundColor: ThemeConfig.infoColor,
+      ),
+    );
+  }
+
+  void _showCreateOKRsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Create Default OKRs'),
+        content: const Text(
+          'This will create standard quarterly OKRs for your team. Continue?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              // Would call provider to create OKRs
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Default OKRs created!'),
+                  backgroundColor: ThemeConfig.successColor,
+                ),
+              );
+            },
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _updateGoalsProgress(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Updating goals progress...'),
+        backgroundColor: ThemeConfig.infoColor,
+      ),
+    );
+  }
+
+  void _openGitHub(BuildContext context) {
+    // Would use url_launcher to open GitHub
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Opening GitHub...'),
+      ),
+    );
+  }
+}
+📦 Final pubspec.yaml
+yaml
+name: sellio_metrics
+description: GitHub metrics dashboard for Sellio-Squad with historical data and OKRs
+
+publish_to: 'none'
+
+version: 2.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  provider: ^6.1.1
+
+  # Network
+  http: ^1.1.0
+
+  # Charts
+  fl_chart: ^0.66.0
+
+  # UI
+  google_fonts: ^6.1.0
+  shimmer: ^3.0.0
+  cached_network_image: ^3.3.0
+
+  # Utils
+  intl: ^0.18.1
+  equatable: ^2.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+
+flutter:
+  uses-material-design: true
